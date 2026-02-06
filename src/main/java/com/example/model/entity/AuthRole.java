@@ -1,0 +1,26 @@
+package com.example.model.entity;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import com.example.model.entity.base.IdEntity;
+
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Setter
+@Getter
+public class AuthRole extends IdEntity {
+    private String name;
+    private String code;
+
+//    @ManyToMany(fetch = FetchType.EAGER)
+//    @JoinTable(
+//            name = "auth_role_permission",
+//            joinColumns = @JoinColumn(name = "role_id"),
+//            inverseJoinColumns = @JoinColumn(name = "permission_id")
+//    )
+//    private List<AuthPermission> permissions;
+}

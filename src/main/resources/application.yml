@@ -1,0 +1,45 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/db_controller
+    username: postgres
+    password: root1234
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  jackson:
+    time-zone: Asia/Tashkent
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: hubProject1234@gmail.com
+    password: exix cpos ndym fpkj
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  ai:
+    openai:
+      api-key: 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
+      chat:
+        model: gpt-4.0-mini
+
+  spring:
+    redis:
+      host: localhost
+      port: 6379
+app:
+  docs-folder: "/home/developer/MyApp/app-knowledge/"
+  base-folder: "/home/developer/MyApp/Agents/"
+  logs-folder: "/home/developer/MyApp/logs/"
+  user-register: "/home/developer/MyApp/user-registery"
+
+app-security:
+  token:
+    access-exp: 6000
+    refresh-exp: 86400
+    secret: bu_secret_key_uzunligi_kamida_32_byte_boliswqewqewqewq

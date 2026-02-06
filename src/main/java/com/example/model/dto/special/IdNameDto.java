@@ -1,0 +1,15 @@
+package com.example.model.dto.special;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class IdNameDto {
+    private String id;
+    private String name;
+}
