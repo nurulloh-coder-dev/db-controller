@@ -24,8 +24,8 @@ spring:
 
   ai:
     openai:
-      api-key: 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
-      chat:
+      api-key: ${OPENAI_API_KEY}
+    chat:
         model: gpt-4.0-mini
 
   spring:
