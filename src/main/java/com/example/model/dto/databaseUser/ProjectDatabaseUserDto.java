@@ -13,10 +13,9 @@ import java.util.List;
 @NoArgsConstructor
 public class ProjectDatabaseUserDto {
     private String id;
-    private String dbUsername;
-    private String dbPassword;
     private AuthUserDto authUserDto;
     private String databaseId;
+    private String username;
 
     private List<DatabaseRoleDTO> roles;
 }

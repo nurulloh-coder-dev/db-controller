@@ -1,9 +1,11 @@
 package com.example.mapper;
 
+import com.example.model.dto.special.DatabaseUserRegistry;
+import com.example.repository.AuthUserRepository;
 import com.example.service.PasswordGenerator;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
-import com.example.model.dto.special.AuthUserDbsResponse;
+import com.example.model.dto.special.AuthUserDbsResponseDb;
 import com.example.model.dto.databaseUser.ProjectDatabaseUserCreateDto;
 import com.example.model.dto.databaseUser.ProjectDatabaseUserDto;
 import com.example.model.dto.databaseUser.ProjectDatabaseUserUpdateDto;
@@ -34,6 +36,7 @@ public class ProjectDatabaseUserMapper implements BaseMapper {
     private final DatabaseRoleMapper databaseRoleMapper;
     private final ProjectDatabaseValidator projectDatabaseValidator;
     private final PasswordGenerator passwordGenerator;
+    private final AuthUserRepository authUserRepository;
 
     public List<ProjectDatabaseUserDto> mapToDtoList(List<ProjectDatabaseUser> all) {
         if (all == null) {
@@ -49,12 +52,11 @@ public class ProjectDatabaseUserMapper implements BaseMapper {
     public ProjectDatabaseUserDto toDto(ProjectDatabaseUser databaseUser) {
         ProjectDatabaseUserDto databaseUserDto = new ProjectDatabaseUserDto();
         databaseUserDto.setId(databaseUser.getId());
-        databaseUserDto.setDbPassword(databaseUser.getPassword());
-        databaseUserDto.setDbUsername(databaseUser.getUsername());
         databaseUserDto.setDatabaseId(databaseUser.getDatabase().getId());
         if(databaseUser.getAuthUser()!=null) {
             databaseUserDto.setAuthUserDto(authUserMapper.toDto(databaseUser.getAuthUser()));
         }
+        databaseUserDto.setUsername(databaseUser.getUsername());
         databaseUserDto.setRoles(databaseRoleMapper.toListDto(databaseUser.getRoles()));
         return databaseUserDto;
     }
@@ -62,23 +64,22 @@ public class ProjectDatabaseUserMapper implements BaseMapper {
     public ProjectDatabaseUser mapToEntityOnCreate(ProjectDatabaseUserCreateDto createDto) {
         ProjectDatabaseUser projectDatabaseUser = new ProjectDatabaseUser();
         ProjectDatabase database = projectDatabaseRepository.findById(createDto.getDatabaseId()).orElseThrow(() -> new RuntimeException("database not found"));
-        AuthUser authUser = authUserValidator.existsAndGet(createDto.getAuthUserId());
+        AuthUser authUser = authUserValidator.validateIdAndGet(createDto.getAuthUserId());
         projectDatabaseValidator.checkIfMemberAlreadyExists(database,createDto.getAuthUserId());
         List<DatabaseRole> roles = databaseRoleRepository.findAllByIdIn(createDto.getRoles());
         projectDatabaseUser.setDatabase(database);
         projectDatabaseUser.setAuthUser(authUser);
-        projectDatabaseUser.setPassword(passwordGenerator.generatePassword());
-        projectDatabaseUser.setUsername(createDto.getDbUsername());
         projectDatabaseUser.setRoles(roles);
+        projectDatabaseUser.setUsername(authUser.getDbUsername());
         projectDatabaseUser.setVersion(versionProviderService.getMaxVersionAndIncrement(database));
         return projectDatabaseUser;
     }
+
+
     public ProjectDatabaseUser mapToEntityOnCreate(ProjectDatabaseUserCreateDto createDto, ProjectDatabase database,AuthUser authUser,List<DatabaseRole> roles, String password) {
         ProjectDatabaseUser projectDatabaseUser = new ProjectDatabaseUser();
         projectDatabaseUser.setDatabase(database);
         projectDatabaseUser.setAuthUser(authUser);
-        projectDatabaseUser.setPassword(password);
-        projectDatabaseUser.setUsername(createDto.getDbUsername());
         projectDatabaseUser.setRoles(roles);
         projectDatabaseUser.setVersion(versionProviderService.getMaxVersionAndIncrement(database));
         return projectDatabaseUser;
@@ -86,8 +87,6 @@ public class ProjectDatabaseUserMapper implements BaseMapper {
 
     public void mapUpdate(ProjectDatabaseUser projectDatabaseUser, ProjectDatabaseUserUpdateDto dto) {
         List<DatabaseRole> roles = databaseRoleRepository.findAllById(dto.getRoleIds());
-        projectDatabaseUser.setPassword(dto.getDbPassword());
-        projectDatabaseUser.setUsername(dto.getDbUsername());
         projectDatabaseUser.setRoles(roles);
         ProjectDatabase database = projectDatabaseRepository.findById(dto.getDatabaseId()).orElseThrow(() -> new RuntimeException("database not found"));
         projectDatabaseUser.setDatabase(database);
@@ -102,18 +101,16 @@ public class ProjectDatabaseUserMapper implements BaseMapper {
                 .toList();
     }
 
-    public List<AuthUserDbsResponse> mapToAuthUserDbResponse(List<ProjectDatabase> allByMemberId,String authUserId) {
+    public List<AuthUserDbsResponseDb> mapToAuthUserDbResponse(List<ProjectDatabase> allByMemberId, String authUserId) {
         return allByMemberId
                 .stream()
                   .flatMap(db->db.getMembers().stream()
-                    .filter(m->m.getAuthUser().getId().equals(authUserId)&& !m.getDeleted())
-                      .map(m-> new AuthUserDbsResponse(
+                    .filter(m->m.getAuthUser()!=null&&m.getAuthUser().getId().equals(authUserId)&& !m.getDeleted())
+                      .map(m-> new AuthUserDbsResponseDb(
                               db.getName(),
-                              m.getId(),
                               m.getUsername(),
-                              m.getPassword(),
                               databaseRoleMapper.toListDto(m.getRoles()))))
-                .      toList();
+                    .toList();
     }
 
     public void mapToDelete(ProjectDatabaseUser projectDatabaseUser) {
@@ -122,22 +119,22 @@ public class ProjectDatabaseUserMapper implements BaseMapper {
         repository.deleteMemberFromDatabase(projectDatabaseUser.getDatabase().getId(),projectDatabaseUser.getId());
     }
 
-    public void mapPatchUpdatePassword(ProjectDatabaseUser projectDatabaseUser, ProjectDatabaseUserUpdateDto updateDto) {
-        if (updateDto.getDbPassword() != null) {
-            projectDatabaseUser.setPassword(updateDto.getDbPassword());
-            projectDatabaseUser.setVersion(versionProviderService.getMaxVersionAndIncrement(projectDatabaseUser.getDatabase()));
+    public void mapPatchUpdatePassword(String authId, String password) {
+        if (password != null && !password.isBlank()) {
+            authUserRepository.updateDbPassword(authId,password);
+            versionProviderService.updateUserToMaxVersions(authId);
         }
     }
 
-    public ProjectDatabaseUser mapToEntityOnCreateNoAuthId(ProjectDatabaseUserCreateDto createDto) {
+    public ProjectDatabaseUser mapToEntityOnCreateNoAuthId(DatabaseUserRegistry user,String databaseId) {
         ProjectDatabaseUser projectDatabaseUser = new ProjectDatabaseUser();
-        Optional<ProjectDatabase> byId = projectDatabaseRepository.findById(createDto.getDatabaseId());
+        Optional<ProjectDatabase> byId = projectDatabaseRepository.findById(databaseId);
         if (byId.isEmpty()) {
             throw new RuntimeException("database could not be found");
         }
         projectDatabaseUser.setDatabase(byId.get());
-        projectDatabaseUser.setUsername(createDto.getDbUsername());
-//        projectDatabaseUser.setRoles(databaseRoleRepository.getAllByName(createDto.getDatabaseId(),createDto.getRoles()));
+        projectDatabaseUser.setUsername(user.getUsername());
+        projectDatabaseUser.setRoles(databaseRoleRepository.getAllByName(databaseId,user.getRoles()));
         return projectDatabaseUser;
     }
 }

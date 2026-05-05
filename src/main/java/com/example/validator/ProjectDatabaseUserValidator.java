@@ -4,6 +4,8 @@ import com.example.exception.ObjectNotFound;
 import com.example.exception.UserAlreadyExist;
 import com.example.repository.ProjectDatabaseRepository;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
+import org.apache.coyote.BadRequestException;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import com.example.model.dto.databaseUser.ProjectDatabaseUserCreateDto;
@@ -19,31 +21,11 @@ import java.util.Optional;
 public class ProjectDatabaseUserValidator implements BaseValidator {
     private final ProjectDatabaseUserRepository repository;
     private final AuthUserValidator authUserValidator;
-    private final MessageSource messageSource;
-    private final Utils utils;
-    private final ProjectDatabaseRepository projectDatabaseRepository;
 
+    @SneakyThrows
     public void validateOnCreate(ProjectDatabaseUserCreateDto createDto) {
-        if (createDto.getDbUsername() == null || createDto.getDbUsername().isBlank()) {
-            throw new RuntimeException("username is required");
-        }
-//        if (createDto.getDbPassword() == null || createDto.getDbPassword().isBlank()) {
-//            throw new RuntimeException("password is required");
-//        }
-        if (createDto.getDbUsername().trim().contains(" ")){
-            throw new RuntimeException(messageSource.getMessage("username.space.conflict",null,utils.getLocaleByLanguage(authUserValidator.validateAuthenticationAndGetLanguage())));
-        }
-        Optional<Boolean> optionalRes =
-                repository.checkUsernameConflictWithRole(createDto.getDbUsername());
-        if (optionalRes.isPresent()) {
-            throw new RuntimeException(messageSource.getMessage("username.conflict.role",null,utils.getLocaleByLanguage(authUserValidator.validateAuthenticationAndGetLanguage())));
-        }
-
-        Optional<Boolean> usernameCheckRes =
-                repository.checkUsernameUniqueness(createDto.getDatabaseId(),createDto.getDbUsername());
-
-        if (usernameCheckRes.isPresent()) {
-            throw new UserAlreadyExist(messageSource.getMessage("username.exists.db",null,utils.getLocaleByLanguage(authUserValidator.validateAuthenticationAndGetLanguage())));
+        if (authUserValidator.validateIdAndGet(createDto.getAuthUserId()).getDbUsername()==null){
+            throw new BadRequestException("database username cannot be null");
         }
     }
 

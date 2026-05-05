@@ -4,12 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Collections;
 import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthUserDbsResponse {
-    private List<AuthUserDbsResponseDb> databases;
-    private String dbPassword;
+public class DatabaseUserRegistry {
+    private String username;
+    private List<String> roles = Collections.emptyList();
 }
+

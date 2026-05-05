@@ -7,6 +7,7 @@ import com.example.model.dto.jar.JarVersionUpdateDto;
 import com.example.model.entity.JarVersion;
 import com.example.service.FileService;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Component
@@ -42,6 +43,7 @@ public class JarVersionMapper implements BaseMapper{
         return allByDeletedFalse
                 .stream()
                 .map(this::toDto)
+                .sorted(Comparator.comparing(JarVersionDto::getReleaseDate).reversed())
                 .toList();
 
     }

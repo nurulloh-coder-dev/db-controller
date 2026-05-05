@@ -39,7 +39,7 @@ public class ProjectDatabaseController {
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable("id") String id) {
+    public void delete(@PathVariable String id) {
         service.delete(id);
     }
 }

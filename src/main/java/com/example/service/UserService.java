@@ -56,7 +56,7 @@ public class UserService
 
     @Override
     public AuthUserDto update(String id, AuthUserUpdateDto dto) {
-        AuthUser authUser = validator.existsAndGet(id);
+        AuthUser authUser = validator.validateIdAndGet(id);
         validator.validateOnUpdate(dto,id);
         mapper.fromDto(dto, authUser);
         publisher.publishEvent(new SendEmailUpdateDBEvent(this, authUser.getEmail(), "Hey there %s!\n Your role has been recently changed to %s. For more info login to your account!".formatted(authUser.getUsername(), authUser.getRole()), authUser.getSettings().getEnableEmailing()));
@@ -65,7 +65,7 @@ public class UserService
 
     @Override
     public AuthUserDto get(String id) {
-        AuthUser authUser = validator.existsAndGet(id);
+        AuthUser authUser = validator.validateIdAndGet(id);
         return mapper.toDto(authUser);
     }
 
@@ -79,10 +79,14 @@ public class UserService
         List<AuthUser> all = mapper.findAllByNameLike(search);
         return mapper.toDto(all);
     }
+    public List<AuthUserDto> getAllBySearch(String search,String dbId) {
+        List<AuthUser> all = mapper.findAllByNameLike(search,dbId);
+        return mapper.toDto(all);
+    }
 
     @Override
     public void delete(String id) {
-        AuthUser authUser = validator.existsAndGet(id);
+        AuthUser authUser = validator.validateIdAndGet(id);
         validator.deleteDatabaseMembership(id);
         projectDatabaseUserRepository.deleteMemberFromDatabaseByAuthUser(id);
         List<ProjectDatabaseUser> allByAuthUser =
@@ -96,7 +100,7 @@ public class UserService
     }
 
     public AuthUserDto updateIgnoreNull(String id, AuthUserUpdateDto dto) {
-        AuthUser authUser = validator.existsAndGet(id);
+        AuthUser authUser = validator.validateIdAndGet(id);
         mapper.fromDtoIgnoreNull(dto, authUser);
         return mapper.toDto(repository.save(authUser));
     }
@@ -107,19 +111,19 @@ public class UserService
     }
 
     public void changeSettings(WebSettings settings) {
-        AuthUser authUser = validator.existsAndGet(validator.validateAuthenticationAndGetId());
+        AuthUser authUser = validator.validateIdAndGet(validator.validateAuthenticationAndGetId());
         mapper.mapSettingsPatch(authUser, settings);
         repository.save(authUser);
     }
 
     public Boolean handlePasswordCheck(String encodedPassword) {
-        AuthUser authUser = validator.existsAndGet(validator.validateAuthenticationAndGetId());
+        AuthUser authUser = validator.validateIdAndGet(validator.validateAuthenticationAndGetId());
         String password = new String(Base64.getDecoder().decode(encodedPassword));
         return passwordEncoder.matches(password, authUser.getPassword());
     }
 
     public void handlePasswordUpdate(String encodedPassword) {
-        AuthUser authUser = validator.existsAndGet(validator.validateAuthenticationAndGetId());
+        AuthUser authUser = validator.validateIdAndGet(validator.validateAuthenticationAndGetId());
         String password = new String(Base64.getDecoder().decode(encodedPassword));
         authUser.setPassword(passwordEncoder.encode(password));
         repository.save(authUser);

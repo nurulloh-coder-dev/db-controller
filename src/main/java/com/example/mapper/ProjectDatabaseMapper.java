@@ -24,7 +24,6 @@ public class ProjectDatabaseMapper implements BaseMapper {
     public ProjectDatabase toEntityFromCreate(ProjectDatabaseCreateDto createDto) {
         ProjectDatabase projectDatabase = new ProjectDatabase();
         projectDatabase.setName(createDto.getName());
-        projectDatabase.setDescription(createDto.getDescription());
         projectDatabase.setOrganization(organizationValidator.validateId(createDto.getOrganizationId()));
         projectDatabase.setAgent(projectAgentValidator.existsAndGet(createDto.getAgentId()));
         return projectDatabase;
@@ -35,7 +34,6 @@ public class ProjectDatabaseMapper implements BaseMapper {
         projectDatabaseDto.setId(save.getId());
         projectDatabaseDto.setName(save.getName());
 
-        projectDatabaseDto.setDescription(save.getDescription());
         projectDatabaseDto.setAgent(projectAgentMapper.toDto(save.getAgent()));
         projectDatabaseDto.setMembers(databaseUserMapper.mapToDtoList(save.getMembers()));
         return projectDatabaseDto;
@@ -43,7 +41,6 @@ public class ProjectDatabaseMapper implements BaseMapper {
 
     public void mapUpdate(ProjectDatabase projectDatabase, ProjectDatabaseUpdateDto dto) {
         projectDatabase.setName(dto.getName());
-        projectDatabase.setDescription(dto.getDescription());
         projectDatabase.setAgent(projectAgentValidator.existsAndGet(dto.getAgentId()));
         projectDatabase.setMembers(repository.findAllByIdIn(dto.getMembersId()));
     }

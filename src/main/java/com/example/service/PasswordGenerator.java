@@ -10,4 +10,8 @@ public class PasswordGenerator {
         String uuidPassword = UUID.randomUUID().toString();
         return uuidPassword.substring(0,7).replace("-", "");
     }
+
+    public String generateUUID() {
+        return UUID.randomUUID().toString();
+    }
 }

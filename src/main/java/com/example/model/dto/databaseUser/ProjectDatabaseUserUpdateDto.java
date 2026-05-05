@@ -1,5 +1,6 @@
 package com.example.model.dto.databaseUser;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,8 +12,9 @@ import java.util.List;
 @NoArgsConstructor
 public class ProjectDatabaseUserUpdateDto {
     private String dbUsername;
-    private String dbPassword;
     private String databaseId;
     private String authUserId;
+
+    @JsonAlias({"roles"})
     private List<String> roleIds;
 }

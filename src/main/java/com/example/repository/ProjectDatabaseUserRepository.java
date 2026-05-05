@@ -51,8 +51,8 @@ public interface ProjectDatabaseUserRepository extends JpaRepository<ProjectData
 
     @Modifying
     @Transactional
-    @Query(value = "update  project_database_user set deleted = true where project_database_id= :dbId and members_id in (:members)",nativeQuery = true)
-    void removeMembers(String id, List<String> removedUsers);
+    @Query(value = "update project_database_user set deleted = true where database_id= :dbId and id in (:members)",nativeQuery = true)
+    void removeMembers(@Param("dbId")String id, @Param("members") List<String> removedUsers);
 
     @Query(value = "select * from project_database_user where database_id = :dbId and username= :username and deleted = false",nativeQuery = true)
     Optional<ProjectDatabaseUser> findByUsernameAndDatabaseId(@Param("username") String username, @Param("dbId") String databaseId);

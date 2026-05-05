@@ -1,15 +1,18 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/db_controller
-    username: postgres
-    password: root1234
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
+
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
+
   jackson:
     time-zone: Asia/Tashkent
+
   mail:
     host: smtp.gmail.com
     port: 587
@@ -26,17 +29,20 @@ spring:
     openai:
       api-key: ${OPENAI_API_KEY}
     chat:
-        model: gpt-4.0-mini
+      model: gpt-4o-mini
 
-  spring:
+  data:
     redis:
-      host: localhost
-      port: 6379
+      url: ${REDIS_URL}
+
+server:
+  port: ${PORT:8080}
+
 app:
-  docs-folder: "/home/developer/MyApp/app-knowledge/"
-  base-folder: "/home/developer/MyApp/Agents/"
-  logs-folder: "/home/developer/MyApp/logs/"
-  user-register: "/home/developer/MyApp/user-registery"
+  docs-folder: "/app/app-knowledge/"
+  base-folder: "/app/Agents/"
+  logs-folder: "/app/logs/"
+  user-register: "/app/user-registery"
 
 app-security:
   token:

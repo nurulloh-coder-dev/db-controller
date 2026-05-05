@@ -20,7 +20,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/user")
 @RequiredArgsConstructor
-@Tag(name = "Foydalanuvchilar bilan ishlash uchun apilar")
 public class UserController {
 
     private final UserService service;
@@ -78,6 +77,14 @@ public class UserController {
     public ResponseEntity<List<AuthUserDto>> getAllBySearch(
             @RequestParam(required = false) String search) {
         List<AuthUserDto> users = service.getAllBySearch(search);
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+
+    @GetMapping("search/{dbId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<AuthUserDto>> getAllBySearch(
+            @RequestParam(required = false) String search, @PathVariable String dbId) {
+        List<AuthUserDto> users = service.getAllBySearch(search,dbId);
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 

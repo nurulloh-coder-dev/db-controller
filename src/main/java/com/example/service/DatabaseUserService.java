@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.model.dto.special.AgentDbUserRow;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,10 +29,10 @@ public class DatabaseUserService {
         if (maxVersion.isEmpty() || maxVersion.get() <= version) {
             return resp;
         }
-        List<Object[]> users = repository.getAllForAgent(agentId, version);
+        List<AgentDbUserRow> users = repository.getAllForAgent(agentId, version);
 
         users.forEach(user -> {
-            String rolesJson = (String) user[6];
+            String rolesJson = user.getRoles();
             List<String> rolesList = Collections.emptyList();
 
             if (rolesJson != null && !rolesJson.equals("null") && !rolesJson.trim().isEmpty()) {
@@ -43,12 +44,11 @@ public class DatabaseUserService {
             }
 
             resp.add(UserDto.builder()
-                    .id(user[0].toString())
-                    .username(user[1].toString())
-                    .password(user[2]!=null?user[2].toString():null)
-                    .deleted(Boolean.parseBoolean(user[3].toString()))
-                    .version(user[4] instanceof Number ? ((Number) user[4]).intValue() : Integer.parseInt(user[4].toString()))
-                    .dbName(user[5].toString())
+                    .username(user.getUsername())
+                    .password(user.getDbPassword()!=null? user.getDbPassword() : null)
+                    .deleted(user.getDeleted())
+                    .version(user.getVersion())
+                    .dbName(user.getDatabaseName())
                     .roles(rolesList == null ? Collections.emptyList() : rolesList)
                     .build());
         });

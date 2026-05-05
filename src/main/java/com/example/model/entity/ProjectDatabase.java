@@ -17,7 +17,6 @@ import java.util.List;
 @Getter
 public class ProjectDatabase extends BaseEntity {
     private String name;
-    private String description;
 
     @ManyToOne
     @JoinColumn(name = "organization_id")

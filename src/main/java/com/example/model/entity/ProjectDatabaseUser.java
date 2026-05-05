@@ -20,12 +20,11 @@ public class ProjectDatabaseUser extends BaseEntity {
     @JoinColumn(name = "user_id")
     private AuthUser authUser;
 
-    private String username;
-    private String password;
-
     @ManyToOne
     @JoinColumn(name = "database_id")
     private ProjectDatabase database;
+
+    private String username;
 
     @ManyToMany
     @JoinTable(

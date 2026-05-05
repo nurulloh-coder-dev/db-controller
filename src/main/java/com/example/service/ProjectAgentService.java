@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.model.dto.special.DatabaseUserRegistry;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import com.example.mapper.ProjectAgentMapper;
@@ -20,7 +21,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class ProjectAgentService extends AbstractService<ProjectAgentRepository, ProjectAgentMapper, ProjectAgentValidator>
@@ -109,15 +109,15 @@ public class ProjectAgentService extends AbstractService<ProjectAgentRepository,
         mapper.mapUpdate(database, roles);
     }
 
-    public void registerUsers(String agentId, List<ProjectDatabaseUserCreateDto> dto) {
-        ProjectDatabase database= validator.validateIdAndGetDatabaseId(agentId);
+    public void registerUsers(String agentId, List<DatabaseUserRegistry> dto) {
+        ProjectDatabase database = validator.validateIdAndGetDatabaseId(agentId);
         List<String> usernamesByDatabaseId = repository.findUsernamesByDatabaseId(database.getId());
-        List<ProjectDatabaseUserCreateDto> newUsers = dto
+        List<DatabaseUserRegistry> newUsers = dto
                 .stream()
-                .filter(r -> !usernamesByDatabaseId.contains(r.getDbUsername()))
+                .filter(r -> !usernamesByDatabaseId.contains(r.getUsername()))
                 .toList();
 
-        List<String> list = dto.stream().map(ProjectDatabaseUserCreateDto::getDbUsername).toList();
+        List<String> list = dto.stream().map(DatabaseUserRegistry::getUsername).toList();
 
         List<String> removedUsers = usernamesByDatabaseId
                 .stream()
@@ -126,7 +126,7 @@ public class ProjectAgentService extends AbstractService<ProjectAgentRepository,
 
 
         projectDatabaseUserService.registerUsers(database, newUsers);
-        projectDatabaseUserService.removeUsers(database,removedUsers);
-        databaseRoleService.syncUserRoles(dto);
+        projectDatabaseUserService.removeUsers(database, removedUsers);
+        databaseRoleService.syncUserRoles(dto, database.getId());
     }
 }

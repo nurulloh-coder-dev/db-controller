@@ -11,7 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProjectDatabaseUserCreateDto {
-    private String dbUsername;
     private String databaseId;
     private String authUserId;
     private List<String> roles = Collections.emptyList();

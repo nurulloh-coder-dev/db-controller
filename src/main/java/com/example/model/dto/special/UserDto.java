@@ -10,11 +10,10 @@ import java.util.List;
 @Setter
 @Builder
 public class UserDto {
-    private String id;
     private String username;
     private String password;
     private List<String> roles;
-    private Integer version;
+    private Long version;
     private boolean deleted;
     private String dbName;
 }

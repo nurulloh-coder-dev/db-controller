@@ -25,6 +25,6 @@ public interface ProjectAgentRepository extends JpaRepository<ProjectAgent, Stri
     @Query(value = "select * from project_agent where name =:dbName and organization_id = :orgId and deleted = false",nativeQuery = true)
     Optional<ProjectAgent> findByDatabaseNameAndCompanyId(@Param("dbName") String dbName, @Param("orgId") String organizationId);
 
-    @Query(value = "select username from project_database_user where deleted = false and database_id =:dbId",nativeQuery = true)
+    @Query(value = "select username from project_database_user where deleted = false and database_id =:dbId and username is not null",nativeQuery = true)
     List<String> findUsernamesByDatabaseId(@Param("dbId") String databaseId);
 }

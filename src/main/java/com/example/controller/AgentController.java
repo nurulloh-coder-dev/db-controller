@@ -1,6 +1,7 @@
 package com.example.controller;
 
 
+import com.example.model.dto.special.DatabaseUserRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -45,7 +46,7 @@ public class AgentController {
     }
 
     @PostMapping("/users")
-    public ResponseEntity<Void> registerUsers(@RequestParam("agentId")String agentId, @RequestBody List<ProjectDatabaseUserCreateDto> dto) {
+    public ResponseEntity<Void> registerUsers(@RequestParam("agentId")String agentId, @RequestBody List<DatabaseUserRegistry> dto) {
         service.registerUsers(agentId,dto);
         return ResponseEntity.noContent().build();
     }

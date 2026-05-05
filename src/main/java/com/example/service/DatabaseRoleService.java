@@ -1,6 +1,7 @@
 package com.example.service;
 
 import com.example.model.dto.databaseUser.ProjectDatabaseUserCreateDto;
+import com.example.model.dto.special.DatabaseUserRegistry;
 import com.example.model.entity.ProjectDatabaseUser;
 import com.example.repository.ProjectDatabaseUserRepository;
 import org.springframework.stereotype.Service;
@@ -60,13 +61,13 @@ public class DatabaseRoleService extends AbstractService<DatabaseRoleRepository,
         return mapper.toListDto(repository.findAllByDatabaseId(id));
     }
 
-    public void syncUserRoles(List<ProjectDatabaseUserCreateDto> dto) {
-        for (ProjectDatabaseUserCreateDto user : dto) {
-            Optional<ProjectDatabaseUser> optional = projectDatabaseUserRepository.findByUsernameAndDatabaseId(user.getDbUsername(), user.getDatabaseId());
+    public void syncUserRoles(List<DatabaseUserRegistry> dto,String databaseId) {
+        for (DatabaseUserRegistry user : dto) {
+            Optional<ProjectDatabaseUser> optional = projectDatabaseUserRepository.findByUsernameAndDatabaseId(user.getUsername(),databaseId);
             if (optional.isEmpty())continue;
             ProjectDatabaseUser projectDatabaseUser = optional.get();
             List<String> roles = user.getRoles();
-            projectDatabaseUser.setRoles(repository.getAllByName(user.getDatabaseId(),roles));
+            projectDatabaseUser.setRoles(repository.getAllByName(databaseId,roles));
             projectDatabaseUserRepository.save(projectDatabaseUser);
         }
     }

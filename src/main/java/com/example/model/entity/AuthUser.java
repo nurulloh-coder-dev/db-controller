@@ -16,6 +16,8 @@ public class AuthUser extends BaseEntity {
     private String name;
     private String username;
     private String password;
+    private String dbPassword;
+    private String dbUsername;
 
     private String email;
     private String phone;

@@ -1,5 +1,7 @@
 package com.example.mapper;
 
+import com.example.model.entity.*;
+import com.example.validator.ProjectDatabaseValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import com.example.model.dto.authUser.AuthUserCreateDto;
@@ -8,10 +10,6 @@ import com.example.model.dto.authUser.AuthUserUpdateDto;
 import com.example.model.dto.organization.OrganizationDto;
 import com.example.model.dto.special.AuthUserCreateWithOrganization;
 import com.example.model.dto.special.IdNameDto;
-import com.example.model.entity.AuthRole;
-import com.example.model.entity.AuthUser;
-import com.example.model.entity.Organization;
-import com.example.model.entity.WebSettings;
 import com.example.model.entity.enums.WebLang;
 import com.example.model.entity.enums.WebTheme;
 import com.example.repository.AuthRoleRepository;
@@ -25,6 +23,7 @@ import com.example.validator.OrganizationValidator;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Component
 @RequiredArgsConstructor
@@ -37,6 +36,7 @@ public class AuthUserMapper implements BaseMapper {
     private final WebSettingsRepository webSettingsRepository;
     private final AuthRoleRepository authRoleRepository;
     private final OrganizationMapper organizationMapper;
+    private final ProjectDatabaseValidator projectDatabaseValidator;
 
     public AuthUser fromDto(AuthUserCreateDto dto) {
         AuthRole role = authRoleValidator.existsAndGet(dto.getRoleId());
@@ -49,8 +49,10 @@ public class AuthUserMapper implements BaseMapper {
         authUser.setRole(role);
         Organization organization = organizationValidator.validateOrganizationByUserId();
         authUser.setCreatedBy(authUserValidator.validateAuthenticationAndGetId());
-        authUser.setSettings(webSettingsRepository.save(new WebSettings(WebTheme.AUTO,WebLang.ENG,true)));
+        authUser.setSettings(webSettingsRepository.save(new WebSettings(WebTheme.AUTO, WebLang.ENG, true)));
         authUser.setOrganization(organization);
+        authUser.setDbPassword(passwordGenerator.generateUUID());
+        authUser.setDbUsername(passwordGenerator.generateUUID());
         return authUser;
     }
 
@@ -120,6 +122,15 @@ public class AuthUserMapper implements BaseMapper {
         return authUserRepository.findAllBySearch(search, authUserValidator.validateAuthenticationAndGetId());
     }
 
+    public List<AuthUser> findAllByNameLike(String search, String dbId) {
+        List<AuthUser> list = projectDatabaseValidator.validateId(dbId).getMembers().stream().map(ProjectDatabaseUser::getAuthUser).toList();
+        List<AuthUser> allBySearch = authUserRepository.findAllBySearch(search, authUserValidator.validateAuthenticationAndGetId());
+        return allBySearch
+                .stream()
+                .filter(u -> !list.contains(u))
+                .toList();
+    }
+
     public List<AuthUser> findAllByCompany() {
         String organizationId = authUserValidator.validateAuthenticationAndGetOrganizationId();
         return authUserRepository.findAllByOrganization(organizationId);
@@ -149,8 +160,10 @@ public class AuthUserMapper implements BaseMapper {
         authUser.setRole(admin.get());
         authUser.setPassword(passwordGenerator.generatePassword());
         authUser.setEmail(dto.getEmail());
-        WebSettings save = webSettingsRepository.save(new WebSettings(WebTheme.AUTO,WebLang.valueOf(lang),true));
+        WebSettings save = webSettingsRepository.save(new WebSettings(WebTheme.AUTO, WebLang.valueOf(lang), true));
         authUser.setSettings(save);
+        authUser.setDbPassword(passwordGenerator.generateUUID());
+        authUser.setDbUsername(passwordGenerator.generateUUID());
         return authUser;
     }
 }

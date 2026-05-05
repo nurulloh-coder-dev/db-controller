@@ -46,11 +46,19 @@ public class AuthUserValidator implements BaseValidator {
         }
     }
 
-    public AuthUser existsAndGet(String id) {
+    public AuthUser validateIdAndGet(String id) {
         return repository.findByIdAndDeleted(id, false).orElseThrow(
                 () -> new ObjectNotFound("User with id " + id + " not found")
         );
     }
+
+    public void validateId(String id) {
+        Boolean res = repository.checkIfExists(id);
+        if (!res){
+            throw new ObjectNotFound("user not found");
+        }
+    }
+
 
 
     public String validateAuthenticationAndGetId() {
@@ -69,10 +77,6 @@ public class AuthUserValidator implements BaseValidator {
         Authentication authentication = checkAuthentification();
 
         CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
-
-        if (principal.getUserId() == null) {
-            throw new RuntimeException("User ID missing");
-        }
 
         return principal.getWebLang();
     }

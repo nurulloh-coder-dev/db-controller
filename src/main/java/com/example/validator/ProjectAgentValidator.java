@@ -2,6 +2,7 @@ package com.example.validator;
 
 import com.example.exception.ObjectNotFound;
 import com.example.model.dto.databaseUser.ProjectDatabaseUserCreateDto;
+import com.example.repository.DatabaseRoleRepository;
 import org.springframework.stereotype.Component;
 import com.example.model.dto.agent.ProjectAgentCreateDTO;
 import com.example.model.dto.databaseRole.DatabaseRoleCreateDTO;
@@ -19,6 +20,7 @@ import java.util.Optional;
 public record ProjectAgentValidator(
         ProjectAgentRepository repository,
         ProjectDatabaseRepository databaseRepository,
+        DatabaseRoleRepository roleRepository,
         OrganizationValidator organizationValidator
 ) implements BaseValidator {
 
@@ -60,7 +62,7 @@ public record ProjectAgentValidator(
         if (!list.isEmpty()) {
             list.forEach((role -> {
                 if (!agentRoles.contains(role)) {
-                    throw new RuntimeException("Role %s has some active reference. Please first remove the role from users that are using it".formatted(role));
+                    roleRepository.removeFromMembers(database.getId(),role);
                 }
             }));
         }

@@ -14,8 +14,6 @@ import java.util.List;
 public class ProjectDatabaseDto {
     private String id;
     private String name;
-    private String description;
-
     private ProjectAgentDTO agent;
 
     private List<ProjectDatabaseUserDto> members;
