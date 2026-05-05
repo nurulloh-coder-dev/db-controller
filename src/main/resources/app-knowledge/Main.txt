@@ -1,0 +1,716 @@
+# Main Dashboard - Complete Guide
+
+**Document Type:** User Guide  
+**Section:** Main Dashboard  
+**Last Updated:** December 29, 2024  
+**Version:** 1.0  
+**Keywords:** dashboard, databases, credentials, password, copy, roles, access, main page, database cards
+
+---
+
+## Overview
+
+The Main Dashboard is the primary landing page users see after logging in. It serves as the central hub for viewing and managing database connections. Users can see all databases they have access to, view their credentials, copy usernames and passwords, edit passwords, and understand their role-based permissions.
+
+**Purpose:** Provide quick access to database credentials and manage database passwords.
+
+**Who uses this:** All authenticated users who have been granted database access by administrators.
+
+**Location:** Accessible from the sidebar by clicking "Main" or automatically displayed after login.
+
+---
+
+## What is the Main Dashboard?
+
+The Main Dashboard displays all database connections assigned to the current user. Each database appears as a card showing the database name, username, and password. Users can interact with these cards to copy credentials or view detailed information including assigned roles.
+
+**Key concept:** Users only see databases they have permission to access. If a user has no database access, they see a message telling them to contact their administrator.
+
+---
+
+## Database Cards Layout
+
+### How Databases Are Displayed
+
+When users open the Main Dashboard, they see their databases displayed as cards in a grid layout. The grid automatically adjusts based on screen size:
+- **Desktop:** Multiple cards per row (usually 3-4)
+- **Tablet:** 2 cards per row
+- **Mobile:** 1 card per row (full width)
+
+### Empty State (No Databases)
+
+**Question:** What happens if a user has no database access?
+
+**Answer:** Users see a friendly empty state with:
+- A large database icon
+- Message: "No Database Access"
+- Explanation: "You currently don't have access to any databases. Please contact your administrator to get access."
+- This is NOT an error - it simply means no databases have been assigned yet
+
+### Loading State
+
+**Question:** What do users see while databases are loading?
+
+**Answer:** A loading message appears: "Loading databases... Please wait" with a spinner or animation. This typically takes 1-3 seconds depending on network speed.
+
+### Error State
+
+**Question:** What if the system cannot load databases?
+
+**Answer:** Users see an error message with:
+- Error icon
+- Message: "Failed to Load Databases"
+- Explanation: "Unable to retrieve your database connections. Please try again."
+- **Retry button** that users can click to attempt loading again
+
+---
+
+## Database Card Information
+
+### What Information Is Shown on Each Card?
+
+Each database card displays three key pieces of information:
+
+1. **Database Name** (at the top, large text)
+   - Example: "Production MySQL", "Development PostgreSQL", "Analytics MongoDB"
+   - This is the identifier for the database connection
+
+2. **Username** (with label "Username")
+   - The login username for connecting to this specific database
+   - Each database may have a different username
+   - Example: "john_doe", "admin", "db_user_123"
+
+3. **Password** (with label "Password")
+   - Displayed as dots (••••••••) for security
+   - Hidden by default to prevent shoulder surfing
+   - Can be revealed in the detailed modal view
+
+### Visual Design
+
+**Card appearance:**
+- White background with subtle shadow
+- Rounded corners for modern look
+- Database name centered at top with bottom border
+- Username and password in separate rows below
+- Each row has: label on left, value in middle, copy button on right
+- Gradient color bar appears at top when hovering (visual feedback)
+
+**Hover effects:**
+- Card lifts slightly (moves up 6 pixels)
+- Shadow becomes more prominent
+- Gradient bar animates from left to right
+- Border color changes to purple/blue
+- Cursor changes to pointer (indicating clickable)
+
+---
+
+## Copy Functionality
+
+### How to Copy Credentials
+
+**Question:** How do I copy my database username or password?
+
+**Answer:** Click the copy button (clipboard icon) next to the username or password. The credential is instantly copied to your clipboard without revealing it on screen.
+
+**Steps:**
+1. Find the database card you need
+2. Locate the username or password row
+3. Click the small copy icon (clipboard symbol) on the right side
+4. The button briefly shows a checkmark to confirm successful copy
+5. Credential is now in your clipboard - paste it wherever needed
+
+**Important notes:**
+- Copy buttons work even when password is hidden (shown as dots)
+- No need to reveal password to copy it
+- Clicking copy does NOT open the modal
+- Copy action happens instantly without page reload
+- Button animation lasts 900 milliseconds (less than 1 second)
+
+### Copy Button Visual Feedback
+
+**Before copy:** Shows clipboard icon  
+**After copy:** Shows checkmark icon for 0.9 seconds  
+**Then:** Returns to clipboard icon
+
+This confirms to users that the copy was successful.
+
+---
+
+## Opening Database Details Modal
+
+### How to View Full Database Information
+
+**Question:** How do I see more details about a database?
+
+**Answer:** Click anywhere on the database card (except the copy buttons). This opens a detailed modal window with complete information.
+
+**What opens the modal:**
+- Clicking the database name
+- Clicking the white space on the card
+- Clicking the username text (not the copy button)
+- Clicking the password dots (not the copy button)
+
+**What does NOT open the modal:**
+- Clicking copy buttons (those only copy)
+- Clicking outside the card
+
+### Modal Layout
+
+The modal is a large overlay window with two main sections:
+
+**Left Side (Purple gradient background):**
+- Database name (large, at top)
+- Username (read-only display)
+- Password field with controls:
+  - Eye icon: toggle password visibility
+  - Edit icon: change password
+  - Password can be shown/hidden
+  - Password can be edited inline
+
+**Right Side (White background):**
+- "Roles" heading
+- List of all database roles assigned to the user
+- Each role shows:
+  - Role name (bold)
+  - Role description (explains what permissions it grants)
+- Scrollable if many roles exist
+
+### Closing the Modal
+
+**Question:** How do I close the database details modal?
+
+**Answer:** Three ways to close:
+1. Click the **X button** in the top-right corner
+2. Click the **dark area outside the modal** (the overlay)
+3. Press the **Escape key** on keyboard
+
+The modal animates smoothly when closing (fades out and slides down).
+
+---
+
+## Password Visibility Toggle
+
+### Showing and Hiding Passwords
+
+**Question:** How do I see my actual password instead of dots?
+
+**Answer:** In the database details modal, click the eye icon next to the password field.
+
+**Eye icon states:**
+1. **Eye icon (open):** Password is currently hidden (shown as ••••••••)
+   - Click to reveal password
+2. **Eye icon with slash (closed):** Password is currently visible (shown as plain text)
+   - Click to hide password
+
+**Behavior:**
+- Toggle works instantly (no loading)
+- Password visibility is temporary (only while modal is open)
+- When modal closes and reopens, password is hidden again by default
+- This is a security feature to prevent accidental password exposure
+
+**Use case:** Users need to see their password to:
+- Copy it manually
+- Verify it before changing
+- Use it in external applications
+
+---
+
+## Password Management
+
+### How to Change a Database Password
+
+**Question:** How do I change my database password?
+
+**Answer:** Follow these steps:
+
+**Step 1: Open Database Details**
+- Click on the database card to open the modal
+
+**Step 2: Enter Edit Mode**
+- Click the **pencil/edit icon** next to the password field
+- The password field transforms into an editable input box
+- A "show/hide" eye icon appears for the new password field
+
+**Step 3: Enter New Password**
+- Type your new password in the input field
+- Password must be at least 5 characters long
+- Cannot be empty
+- Can use the eye icon to toggle visibility while typing
+
+**Step 4: Save or Cancel**
+- **Save:** Click the green "Save" button (shows checkmark icon)
+  - System validates the password
+  - If valid: password is updated, success toast appears
+  - If invalid: error toast shows the problem
+  - Modal refreshes with updated information
+  
+- **Cancel:** Click the gray "Cancel" button (shows X icon)
+  - Returns to view mode without saving
+  - Original password remains unchanged
+  - No changes are made to the database
+
+### Password Requirements
+
+**Minimum length:** 5 characters  
+**Cannot be:** Empty or just spaces  
+**Can include:** Letters, numbers, special characters
+
+**Validation happens:**
+- When clicking Save button
+- Before sending to server
+- User sees immediate feedback if password is invalid
+
+### Password Change Process
+
+**What happens behind the scenes:**
+1. User enters new password and clicks Save
+2. System validates password length (must be 5+ characters)
+3. Password is securely sent to server
+4. Server updates the database password
+5. Success notification appears
+6. Modal displays updated information
+7. Main dashboard card also reflects the change
+
+**Important:** Password changes take effect immediately. The old password stops working right away.
+
+### Common Password Change Scenarios
+
+**Scenario 1: Password too short**
+- User enters "abc" (3 characters)
+- Clicks Save
+- Error toast: "Password must be at least 5 characters long"
+- Password is NOT changed
+- User can try again
+
+**Scenario 2: Empty password**
+- User leaves password field blank
+- Clicks Save
+- Error toast: "Password cannot be empty"
+- Password is NOT changed
+
+**Scenario 3: Successful change**
+- User enters "newpass123" (10 characters)
+- Clicks Save
+- Success toast: "Password updated successfully!"
+- Modal refreshes showing the change was saved
+- User can now use the new password
+
+**Scenario 4: Cancel without saving**
+- User enters a new password
+- Changes mind and clicks Cancel
+- Edit mode closes
+- Original password is still active (no changes made)
+
+---
+
+## Database Roles
+
+### What Are Database Roles?
+
+**Definition:** Roles define what actions and permissions a user has within a specific database. They control what the user can read, write, modify, or delete.
+
+**Examples of common roles:**
+- **Read-only:** Can view data but not modify it
+- **Read-write:** Can view and edit data
+- **Admin:** Full control including user management
+- **Backup operator:** Can create database backups
+- **Developer:** Can create and modify database structures
+
+### Viewing Assigned Roles
+
+**Question:** How do I see what roles I have for a database?
+
+**Answer:** Open the database details modal. The right side shows all roles assigned to you with descriptions.
+
+**What role information shows:**
+- **Role name:** The official name of the role (bold text)
+- **Description:** Explains what permissions this role provides
+- Multiple roles can be assigned to one user
+- Roles are displayed as individual cards for easy reading
+
+**Example display:**
+```
+Read Access
+Can view all data in the database but cannot make changes
+
+Write Access  
+Can create, update, and delete records in assigned tables
+
+Backup Operator
+Can perform database backup and restoration operations
+```
+
+### Role Assignment
+
+**Question:** Can I change my own roles?
+
+**Answer:** No. Roles are assigned by database administrators. Users can only view their assigned roles, not modify them.
+
+**To request role changes:**
+- Contact your database administrator
+- Explain what permissions you need
+- Administrator will update your roles in the system
+
+---
+
+## Common User Questions
+
+### Q: Why don't I see any databases?
+
+**A:** There are two possible reasons:
+
+1. **You haven't been granted access yet**
+   - Your account is active but no databases have been assigned
+   - Contact your system administrator to request access
+   - Provide details about which databases you need
+
+2. **System loading error**
+   - Network issue or server problem
+   - Click the "Retry" button if you see an error message
+   - Refresh your browser page (F5 or Ctrl+R)
+   - If problem persists, contact IT support
+
+### Q: Can I add new databases myself?
+
+**A:** No. Database access is controlled by administrators. Users cannot add databases or grant themselves access. This is a security measure to ensure proper access control.
+
+**To get access to a new database:**
+- Submit a request to your administrator
+- Explain why you need access
+- Administrator will evaluate and grant access if appropriate
+
+### Q: Why is my password shown as dots?
+
+**A:** This is a security feature. Passwords are hidden by default to prevent unauthorized viewing (shoulder surfing). Click the eye icon in the database details modal to temporarily reveal the password.
+
+### Q: Can I change my username?
+
+**A:** No. Usernames are assigned by administrators and cannot be changed by users. If you need a different username, contact your administrator.
+
+### Q: What happens if I forget my password?
+
+**A:** Use the edit password feature to set a new password. You can change your password at any time without knowing the old one. The system allows password resets through the edit function.
+
+**Steps:**
+1. Open the database card
+2. Click edit icon
+3. Enter a new password
+4. Save changes
+
+### Q: How do I copy my password without seeing it?
+
+**A:** Click the copy button next to the password field on the database card. The password is copied to your clipboard even though it appears as dots. You don't need to reveal it to copy it.
+
+### Q: Can I access databases from mobile devices?
+
+**A:** Yes. The Main Dashboard is fully responsive and works on smartphones and tablets. The layout adjusts automatically for smaller screens with touch-friendly buttons.
+
+### Q: Why do I see certain roles but not others?
+
+**A:** Roles are assigned based on your job requirements and security clearance. You only see the roles that have been granted to you. Different users may have different roles for the same database.
+
+### Q: What if a database I need is missing?
+
+**A:** If you previously had access to a database but don't see it now:
+- Your access may have been removed or changed
+- The database may be temporarily unavailable
+- There may be a system issue
+
+**Action:** Contact your administrator to verify your access status.
+
+### Q: Can I share my database credentials with colleagues?
+
+**A:** No. Credentials are personal and should never be shared. Each user should have their own account with appropriate permissions. Sharing credentials:
+- Violates security policies
+- Creates audit trail issues
+- May result in account suspension
+
+If a colleague needs database access, they should request their own account.
+
+### Q: How often should I change my password?
+
+**A:** Follow your organization's password policy. Common practices:
+- Change password every 90 days
+- Change immediately if compromised
+- Use strong, unique passwords
+- Don't reuse old passwords
+
+### Q: What makes a good database password?
+
+**A:** While the system requires minimum 5 characters, best practices recommend:
+- At least 12 characters
+- Mix of uppercase and lowercase letters
+- Include numbers and special characters
+- Avoid common words or personal information
+- Don't use the same password for multiple databases
+
+---
+
+## Troubleshooting Common Issues
+
+### Issue: Copy button doesn't work
+
+**Possible causes:**
+- Browser clipboard permissions blocked
+- Using old browser version
+- Browser security settings
+
+**Solutions:**
+1. Check browser clipboard permissions in settings
+2. Update browser to latest version
+3. Try a different browser
+4. Manually select and copy the text after revealing password
+
+### Issue: Modal won't close
+
+**Solutions:**
+1. Click the X button in top-right corner
+2. Press Escape key on keyboard
+3. Click the dark overlay area outside the modal
+4. Refresh the page if modal is stuck
+
+### Issue: Password change fails
+
+**Possible causes:**
+- Password too short (less than 5 characters)
+- Network connection issue
+- Session expired
+
+**Solutions:**
+1. Ensure password is at least 5 characters
+2. Check internet connection
+3. Try again in a few seconds
+4. Refresh page and attempt again
+5. Log out and log back in
+
+### Issue: Database cards not loading
+
+**Possible causes:**
+- Network connectivity problem
+- Server maintenance
+- Session timeout
+- Browser cache issue
+
+**Solutions:**
+1. Click the "Retry" button
+2. Refresh browser (F5 or Ctrl+R)
+3. Check internet connection
+4. Clear browser cache
+5. Log out and log back in
+6. Contact IT support if issue persists
+
+### Issue: Can't see password even with eye icon
+
+**Possible cause:**
+- Browser privacy/security extension blocking
+- Password field rendering issue
+
+**Solutions:**
+1. Disable browser privacy extensions temporarily
+2. Try incognito/private browsing mode
+3. Use copy button instead (works without viewing)
+4. Try different browser
+
+### Issue: Roles not displaying
+
+**Possible causes:**
+- No roles assigned yet
+- Loading error
+- Network timeout
+
+**Solutions:**
+1. Close and reopen the modal
+2. Refresh the page
+3. Contact administrator to verify role assignments
+4. Check if you actually have roles assigned
+
+---
+
+## Security Best Practices
+
+### Protecting Your Credentials
+
+**Always:**
+- ✅ Hide passwords after viewing (click eye icon to hide)
+- ✅ Log out when leaving your computer
+- ✅ Use the copy function instead of writing passwords down
+- ✅ Close modals after getting credentials
+- ✅ Change passwords regularly
+- ✅ Report suspicious activity immediately
+
+**Never:**
+- ❌ Share your credentials with anyone
+- ❌ Leave password visible on screen unattended
+- ❌ Write passwords on paper or sticky notes
+- ❌ Send passwords via email or chat
+- ❌ Use the same password for multiple databases
+- ❌ Store passwords in plain text files
+
+### Session Security
+
+- System automatically logs out inactive users
+- Session timeout occurs after period of inactivity
+- Always use secure (HTTPS) connection
+- Don't access from public/untrusted computers
+- Clear browser data when using shared computers
+
+### Reporting Security Issues
+
+**If you suspect:**
+- Unauthorized access to your account
+- Compromised credentials
+- Unusual database activity
+- Security vulnerability
+
+**Take action:**
+1. Change password immediately
+2. Log out all sessions
+3. Report to security team/administrator
+4. Document what you observed
+
+---
+
+## Performance and Loading
+
+### Expected Load Times
+
+**Normal performance:**
+- Dashboard loads: 1-3 seconds
+- Modal opens: Instant (no loading)
+- Password toggle: Instant
+- Copy action: Instant
+- Password save: 1-2 seconds
+
+### What Affects Performance
+
+**Factors:**
+- Number of databases assigned to user
+- Network speed
+- Server load
+- Number of roles per database
+- Browser performance
+
+**Optimization tips:**
+- Use modern browser (Chrome, Firefox, Edge, Safari)
+- Ensure stable internet connection
+- Close unnecessary browser tabs
+- Clear browser cache periodically
+
+---
+
+## Accessibility Features
+
+### Keyboard Navigation
+
+- **Tab key:** Move between interactive elements
+- **Enter/Space:** Activate buttons
+- **Escape:** Close modals
+- **Arrow keys:** Scroll in modal (when focused)
+
+### Screen Reader Support
+
+- All buttons have descriptive labels
+- Form fields have proper labels
+- Error messages are announced
+- Success notifications are announced
+- Semantic HTML structure for navigation
+
+### Visual Accessibility
+
+- High contrast text
+- Clear visual hierarchy
+- Large touch targets (44x44 pixels minimum)
+- Focus indicators on interactive elements
+- Color not the only indicator (icons + text)
+
+---
+
+## Mobile Experience
+
+### Touch Interactions
+
+- Tap database card to open modal
+- Tap copy button to copy credentials
+- Swipe to scroll role list
+- Pinch to zoom (if needed)
+- Long press for context (browser default)
+
+### Mobile Optimizations
+
+- Single column card layout
+- Full-width cards for easy tapping
+- Larger buttons for touch
+- Optimized modal for small screens
+- Toast notifications positioned for mobile
+- Responsive text sizing
+
+### Mobile-Specific Tips
+
+- Rotate to landscape for better modal view
+- Use copy function (easier than manual selection)
+- Zoom in if text is small
+- Stable internet connection recommended
+- Works in all mobile browsers
+
+---
+
+## Integration with Other Sections
+
+### How Main Dashboard Connects to Other Features
+
+**Databases Section:**
+- Administrators manage database connections in Databases section
+- Changes there affect what appears in Main Dashboard
+- Main Dashboard shows user's personal view
+- Databases section shows admin/management view
+
+**Users Section:**
+- User accounts created in Users section
+- Database access granted through Users section
+- Main Dashboard reflects granted permissions
+
+**Profile Section:**
+- User's name from Profile appears in dashboard
+- Profile settings don't affect database access
+- Both sections share authentication
+
+**Settings Section:**
+- Theme preference affects dashboard appearance
+- Language setting changes text display
+- Notification settings control toast behavior
+
+---
+
+## Summary
+
+The Main Dashboard is your primary interface for accessing database credentials. Key capabilities:
+
+✅ View all assigned databases at a glance  
+✅ Copy usernames and passwords with one click  
+✅ View detailed database information and roles  
+✅ Change database passwords securely  
+✅ Toggle password visibility for verification  
+✅ Responsive design works on all devices  
+✅ Secure by default with hidden passwords  
+✅ Real-time notifications for all actions  
+
+**Remember:** You can only see databases assigned to you by administrators. For new access or changes, contact your system administrator.
+
+---
+
+## Related Topics
+
+Users searching for information about the Main Dashboard might also need:
+- Authentication and login procedures
+- Database management for administrators
+- Profile settings and preferences
+- User role definitions
+- Security policies
+- Troubleshooting connection issues
+- Password requirements and best practices
+
+---
+
+**End of Document**
+
+*This documentation is optimized for AI retrieval and user assistance. It covers all aspects of the Main Dashboard with detailed explanations, common questions, and troubleshooting guidance.*

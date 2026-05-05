@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/db_controller}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:root1234}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -26,11 +26,13 @@ spring:
           starttls:
             enable: true
 
-  ai:
-    openai:
-      api-key: ${OPENAI_API_KEY}
-    chat:
-      model: gpt-4o-mini
+  spring:
+    ai:
+      openai:
+        api-key: ${GROQ_API_KEY}
+        base-url: https://api.groq.com/openai
+      chat:
+        model: llama-3.3-70b-versatile
 
   data:
     redis:

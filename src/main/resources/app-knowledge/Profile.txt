@@ -1,0 +1,648 @@
+# Profile - Complete Guide
+
+**Document Type:** User Guide  
+**Section:** Profile  
+**Last Updated:** December 31, 2024  
+**Version:** 1.0  
+**Keywords:** profile, account, user information, personal details, name, username, email, phone, edit profile, user settings
+
+---
+
+## Overview
+
+The Profile page allows users to view and edit their personal account information. Users can update their full name, username, email address, and phone number. The page displays the user's role but this cannot be edited by the user.
+
+**Purpose:** Manage personal account information and keep contact details up to date.
+
+**Who uses this:** All authenticated users can view and edit their own profile.
+
+**Location:** Accessible from the sidebar by clicking "Profile" (user icon).
+
+---
+
+## What is the Profile Page?
+
+The Profile page displays your account information in an organized, card-based layout with:
+- **Profile header**: Shows your name, avatar, and role badge
+- **Editable fields**: Full name, username, email, and phone number
+- **Role display**: Your assigned role (non-editable)
+
+**Key concept:** Each field can be edited individually. Changes are saved immediately and update across the platform.
+
+---
+
+## Page Layout
+
+### Profile Header
+
+The header section features:
+- **Avatar circle**: User icon with gradient purple background
+- **Your name**: Displayed in large white text (32px)
+- **Role badge**: Shows your role in a pill-shaped badge (e.g., "ADMIN", "DEVELOPER")
+
+**Visual design:**
+- Purple gradient background (elegant and professional)
+- White text for maximum readability
+- Centered layout
+- Glass-morphism effects on avatar and badge
+
+### Profile Information Cards
+
+Four information cards appear below the header:
+
+1. **Full Name** - Your display name
+2. **Username** - Your login username
+3. **Email** - Your email address
+4. **Phone** - Your phone number (optional)
+
+Each card shows:
+- **Label icon**: Visual indicator of field type
+- **Field label**: Uppercase label text
+- **Current value**: Your current information
+- **Edit button**: Purple button to enable editing
+
+---
+
+## Loading States
+
+**Initial load:**
+- Cards show loading animation (shimmer effect)
+- Profile name and role show loading placeholders
+- Typically loads in 1-3 seconds
+
+**Error state:**
+- Shows error icon and message: "Failed to Load Profile"
+- Includes explanation: "Unable to retrieve your profile information"
+- **Retry button** to attempt loading again
+
+**Success state:**
+- All fields populated with your data
+- Edit buttons become active
+- Profile ready to view and edit
+
+---
+
+## Viewing Profile Information
+
+### Full Name
+
+**What it shows:** Your full name as displayed throughout the platform
+
+**Label icon:** Person icon  
+**Example:** "John Doe", "Jane Smith"
+
+**Where it's used:**
+- Profile header
+- User lists
+- Activity logs
+- Notifications
+
+### Username
+
+**What it shows:** Your unique login username
+
+**Label icon:** Person icon  
+**Example:** "john.doe", "jsmith123"
+
+**Important notes:**
+- Used for logging in
+- Must be unique across the platform
+- Can be changed (updates login credentials)
+
+### Email
+
+**What it shows:** Your email address
+
+**Label icon:** Envelope icon  
+**Example:** "john.doe@company.com"
+
+**Used for:**
+- Account notifications
+- Password resets
+- Communication from administrators
+
+### Phone
+
+**What it shows:** Your phone number (optional field)
+
+**Label icon:** Phone icon  
+**Example:** "+1 (555) 123-4567", "Not provided"
+
+**Notes:**
+- Optional - can be left empty
+- Shows "Not provided" if not set
+- No specific format required
+
+### Role
+
+**What it shows:** Your assigned system role
+
+**Label icon:** Layers icon  
+**Example:** "ADMIN", "DEVELOPER", "USER"
+
+**Important:**
+- **Cannot be edited by users**
+- Only administrators can change roles
+- Determines your permissions throughout the platform
+
+---
+
+## Editing Profile Information
+
+### How to Edit a Field
+
+**Question:** How do I update my profile information?
+
+**Answer:** Click the Edit button next to any field, make your changes, and click Save.
+
+**Step-by-step:**
+
+1. **Click Edit button**
+   - Purple "Edit" button appears on right side of each card
+   - Pencil icon indicates editable field
+   - Card switches to edit mode
+
+2. **Edit mode appears**
+   - Input field shows with current value selected
+   - Value is automatically highlighted for easy replacement
+   - Save and Cancel buttons appear below input
+
+3. **Make changes**
+   - Type new value in the input field
+   - Can replace entire value or modify parts
+   - Field validates on save (not while typing)
+
+4. **Save or Cancel**
+   - **Save button (green)**: Updates your information
+   - **Cancel button (gray)**: Discards changes
+
+### Save Button
+
+**Appearance:**
+- Green background with checkmark icon
+- Text: "Save"
+- Full width of left half
+
+**Save process:**
+1. Click Save button
+2. Button text changes to "Saving..."
+3. Both buttons become disabled
+4. API updates your information
+5. On success:
+   - Success toast appears: "[Field] updated successfully!"
+   - Edit mode closes automatically
+   - New value displays in card
+   - Change reflected immediately
+6. On error:
+   - Error toast shows problem
+   - Edit mode remains open
+   - Can fix issue and try again
+   - Buttons re-enable
+
+**Validation:**
+- **Name**: Cannot be empty
+- **Username**: Cannot be empty
+- **Email**: Must be valid email format (name@domain.com)
+- **Phone**: Any format accepted, can be empty
+
+### Cancel Button
+
+**Appearance:**
+- Gray background with X icon
+- Text: "Cancel"
+- Full width of right half
+
+**Cancel process:**
+1. Click Cancel button
+2. Input field clears
+3. Edit mode closes instantly
+4. Original value remains unchanged
+5. No API calls made
+6. No notifications shown
+
+**When to cancel:**
+- Changed your mind
+- Made a typing error
+- Accidentally clicked Edit
+- Don't want to change anymore
+
+### Editing Multiple Fields
+
+**Question:** Can I edit multiple fields at once?
+
+**Answer:** No. Only one field can be in edit mode at a time.
+
+**Behavior:**
+- Opening edit on one field automatically cancels edit on others
+- Must save or cancel current field before editing another
+- This prevents confusion and ensures accurate updates
+
+---
+
+## Field-Specific Information
+
+### Editing Full Name
+
+**Validation:**
+- Cannot be empty
+- Can include letters, spaces, special characters
+- No specific format required
+
+**Common updates:**
+- Legal name changes
+- Preferred name updates
+- Fixing typos
+
+**Impact:**
+- Updates display throughout platform immediately
+- Shows in user lists, activity logs, notifications
+
+### Editing Username
+
+**Validation:**
+- Cannot be empty
+- Must be unique (no other user can have same username)
+- Case-sensitive
+
+**Important:**
+- **This changes your login credentials**
+- Use new username for next login
+- Old username no longer works
+
+**Best practices:**
+- Choose memorable username
+- Avoid special characters if possible
+- Keep it professional
+- Don't change frequently
+
+### Editing Email
+
+**Validation:**
+- Cannot be empty
+- Must be valid email format
+- Must include @ symbol and domain
+
+**Examples of valid emails:**
+- john.doe@company.com
+- jsmith@example.org
+- user123@domain.co.uk
+
+**Examples of invalid emails:**
+- johndoe (missing @ and domain)
+- john@doe (missing domain extension)
+- @company.com (missing name part)
+
+**Impact:**
+- Used for important notifications
+- Required for password resets
+- Contact information for administrators
+
+### Editing Phone
+
+**Validation:**
+- Can be empty (optional field)
+- Any format accepted
+- No validation on format
+
+**Accepted formats:**
+- +1 (555) 123-4567
+- 555-123-4567
+- 5551234567
+- +44 20 1234 5678
+
+**Notes:**
+- Shows "Not provided" if empty
+- Can include country codes
+- Use format familiar to you
+
+---
+
+## Common Questions
+
+### Q: Can I change my role?
+
+**A:** No. Roles are assigned by administrators and cannot be changed by users. If you need a different role, contact your organization administrator.
+
+### Q: What happens if I change my username?
+
+**A:** Your login credentials change immediately. You must use the new username for your next login. The old username no longer works.
+
+### Q: Do I need to fill in the phone number?
+
+**A:** No. Phone number is optional. You can leave it empty or remove it by editing and leaving the field blank (though save button requires at least some content, to clear it contact administrator).
+
+### Q: Can I use the same email as another user?
+
+**A:** This depends on your platform configuration. Typically, email addresses should be unique, but check with your administrator.
+
+### Q: Why can't I save my changes?
+
+**A:** Common reasons:
+- Field is empty (name, username, email required)
+- Email format is invalid
+- Username is already taken
+- Network connection issue
+- Session expired
+
+Check the error message for specific details.
+
+### Q: What if I make a mistake while editing?
+
+**A:** Click the Cancel button to discard changes and return to the original value. No changes are saved until you click Save.
+
+### Q: How long do changes take to apply?
+
+**A:** Changes are immediate. Once you save, your new information appears instantly throughout the platform. Other users see your updated information immediately.
+
+### Q: Can I edit multiple fields before saving?
+
+**A:** No. You must save or cancel each field individually. Opening edit mode on one field automatically closes edit mode on other fields.
+
+### Q: Will changing my email log me out?
+
+**A:** No. Changing your email does not affect your current session. You remain logged in.
+
+### Q: Can administrators see my changes?
+
+**A:** Yes. Profile changes may be logged for audit purposes. Administrators can see user profile updates.
+
+---
+
+## Troubleshooting
+
+### Issue: Profile won't load
+
+**Symptoms:**
+- Loading animation never stops
+- Error message appears
+- Profile stays blank
+
+**Solutions:**
+1. Click Retry button
+2. Refresh browser page (F5 or Ctrl+R)
+3. Check internet connection
+4. Log out and log back in
+5. Clear browser cache
+6. Contact IT support
+
+### Issue: Can't click Edit button
+
+**Symptoms:**
+- Edit button appears but doesn't respond
+- Nothing happens when clicking Edit
+- Button seems disabled
+
+**Solutions:**
+1. Ensure profile finished loading
+2. Refresh page
+3. Check if another field is already being edited
+4. Try different browser
+5. Clear browser cache
+
+### Issue: Save button doesn't work
+
+**Symptoms:**
+- Clicking Save does nothing
+- Button seems stuck
+- No success or error message
+
+**Solutions:**
+1. **Check validation:**
+   - Ensure field is not empty (for required fields)
+   - Check email format is valid
+   - Make sure you actually changed something
+
+2. **Check connection:**
+   - Verify internet connection
+   - Try again in a few seconds
+
+3. **Session issues:**
+   - Log out and log back in
+   - Refresh page before editing
+
+4. **Browser issues:**
+   - Try different browser
+   - Clear browser cache
+   - Disable browser extensions
+
+### Issue: Changes don't save
+
+**Symptoms:**
+- Save seems to work but value doesn't update
+- Old value still shows after saving
+- Success message appears but nothing changed
+
+**Solutions:**
+1. Refresh page to see if change actually saved
+2. Check error messages carefully
+3. Verify network connection didn't drop
+4. Try again with stable connection
+5. Contact support if persists
+
+### Issue: Invalid email error
+
+**Symptoms:**
+- Error: "Please enter a valid email address"
+- Can't save email field
+
+**Solutions:**
+1. **Check format:**
+   - Must have @ symbol
+   - Must have domain (e.g., .com, .org)
+   - Example: name@domain.com
+
+2. **Common mistakes:**
+   - Missing @ symbol
+   - Missing domain extension
+   - Spaces in email address
+   - Special characters in wrong places
+
+3. **Valid format:** `name@domain.extension`
+
+### Issue: Can't clear phone number
+
+**Symptoms:**
+- Want to remove phone number
+- Field requires some value
+- Can't leave it empty
+
+**Solutions:**
+1. Enter a space or dash initially (workaround)
+2. Contact administrator to clear the field
+3. Some fields may require content to save
+
+---
+
+## Visual Design
+
+### Profile Header
+
+**Colors:**
+- Gradient background: Purple (#667eea) to violet (#764ba2)
+- Text: White for maximum contrast
+- Avatar: Semi-transparent white with glass effect
+- Role badge: Semi-transparent white with glass border
+
+**Effects:**
+- Smooth gradients
+- Glass-morphism (frosted glass effect)
+- Soft shadows
+- Rounded elements
+
+### Information Cards
+
+**Default state:**
+- Light gray gradient background
+- Purple-bordered hover effect
+- Icon in purple accent color
+- Clean, modern typography
+
+**Edit state:**
+- Input field with border
+- Green Save button with gradient
+- Gray Cancel button
+- Focus highlights in purple
+
+**Hover effects:**
+- Cards lift slightly
+- Border color changes to purple
+- Subtle shadow appears
+- Smooth transitions
+
+---
+
+## Responsive Design
+
+### Desktop Experience
+- Maximum width: 800px centered
+- Cards at comfortable reading width
+- Spacious padding
+- Side-by-side buttons
+
+### Tablet Experience
+- Cards adjust to screen width
+- Buttons remain side by side
+- Slightly reduced padding
+- Touch-friendly sizes
+
+### Mobile Experience
+- Full-width cards
+- Stacked layouts
+- Larger touch targets
+- Buttons remain side by side (half width each)
+- Avatar and text sizes adjusted
+- Reduced padding for space optimization
+
+---
+
+## Security and Privacy
+
+### What's Private
+
+**Your profile information is:**
+- Visible only to authenticated users in your organization
+- Not publicly accessible
+- Protected by login requirements
+
+**Administrators can:**
+- View all user profiles
+- Edit user information
+- Change user roles
+- See profile update history
+
+### What's Logged
+
+**Profile changes are tracked:**
+- What field was changed
+- Old value and new value
+- When change occurred
+- Who made the change (you)
+
+**Purpose of logging:**
+- Audit compliance
+- Security monitoring
+- Troubleshooting
+- Account recovery
+
+### Best Practices
+
+**Keep information current:**
+- ✅ Update email if it changes
+- ✅ Use real, professional information
+- ✅ Maintain accurate contact details
+
+**Protect your account:**
+- ✅ Choose unique username
+- ✅ Use professional email address
+- ✅ Report any unauthorized changes
+- ✅ Keep email access secure (for password resets)
+
+---
+
+## Integration with Other Sections
+
+**Main Dashboard:**
+- Your name appears in database cards
+- Profile information used in activity logs
+
+**Users Section:**
+- Administrators see your profile information
+- Your data appears in user lists
+
+**Settings:**
+- Theme preferences don't affect profile
+- Settings are separate from profile info
+
+**Organization:**
+- Your profile belongs to current organization
+- Organization name may appear in profile
+
+---
+
+## Summary
+
+The Profile page lets you manage your personal account information:
+
+✅ View all your account details in one place  
+✅ Edit name, username, email, and phone  
+✅ Changes save immediately and update platform-wide  
+✅ Simple one-field-at-a-time editing  
+✅ Clear validation and error messages  
+✅ Responsive design for all devices  
+✅ Secure and audited changes  
+
+**Key points:**
+- Only edit one field at a time
+- Username changes affect your login credentials
+- Email must be valid format
+- Phone is optional
+- Role cannot be changed by users
+- Changes are immediate and permanent
+
+---
+
+## Quick Reference
+
+**Edit a field:**
+Profile → Click Edit → Type new value → Click Save
+
+**Cancel changes:**
+Click Cancel button or start editing different field
+
+**Fix email error:**
+Ensure format: name@domain.com
+
+**Change username:**
+Remember new username for next login
+
+**Clear field:**
+Edit → Delete content → Save (may not work for required fields)
+
+**Reload profile:**
+Refresh page (F5) or click Retry button
+
+---
+
+**End of Document**
+
+*This documentation covers all aspects of the Profile page. For questions about roles and permissions, refer to Users documentation or contact your administrator.*

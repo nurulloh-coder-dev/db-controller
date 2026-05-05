@@ -1,0 +1,374 @@
+# Organization Settings - Complete Guide
+
+**Document Type:** User Guide  
+**Section:** Organization Settings  
+**Last Updated:** December 31, 2024  
+**Version:** 1.0  
+**Keywords:** organization, settings, organization ID, organization name, company, account, team, activity analytics
+
+---
+
+## Overview
+
+The Organization Settings page allows users to view and manage their organization's basic information. This page displays your organization ID (required for agent configuration) and allows administrators to update the organization name.
+
+**Purpose:** Access organization ID for agent setup and manage organization display name.
+
+**Who uses this:** All users can view; administrators can edit organization name.
+
+**Location:** Accessible from the sidebar by clicking "Organization" (building icon).
+
+---
+
+## What is the Organization Page?
+
+The Organization page shows essential information about your organization:
+- **Organization ID**: Permanent identifier needed for agent configuration
+- **Organization Name**: Customizable display name shown throughout the platform
+- **Activity Analytics**: Preview of upcoming analytics features (coming soon)
+
+**Key concept:** Your organization ID never changes and is required when setting up agents to connect to your databases.
+
+---
+
+## Page Layout
+
+### Two Main Sections
+
+**1. Organization Details Card (top)**
+- Organization ID field (read-only, copyable)
+- Organization Name field (editable by admins)
+
+**2. Activity Analytics Card (bottom)**
+- "Coming Soon" preview showing planned features
+- Future capabilities: Activity Tracking, Usage Statistics, Performance Insights
+
+### Loading States
+
+**Initial load:**
+- Shows spinning loader with "Loading organization information..."
+- Typically loads in 1-3 seconds
+
+**Error state:**
+- Shows error icon and message: "Unable to load organization information"
+- Includes Retry button to attempt loading again
+
+**Success state:**
+- All organization information displays
+- Fields are interactive and ready to use
+
+---
+
+## Organization ID
+
+### What is it?
+
+The Organization ID is a unique, permanent identifier for your organization (UUID format).
+
+**Example:** `a1b2c3d4-e5f6-7890-abcd-ef1234567890`
+
+**Why it matters:**
+- Required when configuring agents
+- Links agents to your organization's databases
+- Cannot be changed (assigned at organization creation)
+
+### Copying Organization ID
+
+**How to copy:**
+1. Click the "Copy" button next to the organization ID
+2. Button shows checkmark and "Copied!" confirmation
+3. Toast notification: "Organization ID copied to clipboard"
+4. Button returns to normal after 2 seconds
+
+**Use cases:**
+- Agent configuration files
+- Sharing with team members setting up agents
+- Integration setups
+
+**Security note:** Organization ID is not secret - safe to share with your team. However, agents still need proper credentials to access databases.
+
+---
+
+## Organization Name
+
+### What is it?
+
+The Organization Name is a user-friendly label that can be customized. Unlike the ID, you can change this anytime.
+
+**Examples:** "Acme Corporation", "Development Team", "Analytics Division"
+
+### Viewing Organization Name
+
+- Displayed in a highlighted box below the organization ID
+- Shows current name or "Unnamed Organization" if not set
+- Edit button appears on the right (for administrators)
+
+### Editing Organization Name
+
+**Question:** How do I change the organization name?
+
+**Answer:** Click Edit, type the new name, and click Save.
+
+**Step-by-step:**
+
+1. **Click Edit button** (pencil icon)
+   - Display mode switches to edit mode
+   - Input field appears with current name selected
+
+2. **Type new name**
+   - Name can include letters, numbers, spaces, special characters
+   - Cannot be empty
+
+3. **Save or Cancel**
+   - **Save button (green)**: Updates the name
+   - **Cancel button (gray)**: Discards changes
+
+**Save process:**
+- Button shows spinner and "Saving..." text
+- On success: "Organization name updated successfully" toast
+- Edit mode closes, new name displays
+- Other users see change after refreshing browser
+
+**Validation:**
+- Name cannot be empty
+- Leading/trailing spaces automatically trimmed
+- Shows error if validation fails
+
+**Cancel:**
+- Click Cancel button or press Escape key
+- Returns to display mode without saving
+- No changes made
+
+### What's Affected by Name Changes
+
+**Changes:**
+- Organization name throughout UI
+- Session information
+- User-visible labels
+
+**NOT affected:**
+- Organization ID (never changes)
+- Agent configurations (use ID, not name)
+- Database connections
+- User permissions
+
+---
+
+## Activity Analytics (Coming Soon)
+
+### Preview Section
+
+The Activity Analytics card shows three upcoming features:
+
+**1. Activity Tracking**
+- Monitor daily organization activities
+- Track user access patterns
+
+**2. Usage Statistics**
+- Agent and database usage metrics
+- Resource consumption tracking
+
+**3. Performance Insights**
+- System performance analysis
+- Identify optimization opportunities
+
+**Note:** These features are in development. The section is informational only and has no interactive elements currently.
+
+---
+
+## Common Questions
+
+### Q: What is my organization ID used for?
+
+**A:** Your organization ID is required when configuring agents. Agents use this ID to authenticate and connect to your organization's databases.
+
+### Q: Can I change my organization ID?
+
+**A:** No. Organization IDs are permanent and assigned when your organization is created. This ensures stable agent configurations and reliable connections.
+
+### Q: Is my organization ID secret?
+
+**A:** No, it's safe to share with team members. The ID identifies your organization but cannot grant database access alone - agents still need proper credentials.
+
+### Q: Why can't I edit the organization name?
+
+**A:** Only administrators can edit organization settings. If you need edit access, contact your organization administrator to request permissions.
+
+### Q: Will changing the organization name break my agents?
+
+**A:** No. Agents use the organization ID (which never changes), not the organization name. You can safely update the name without affecting agents.
+
+### Q: How long do organization name changes take to apply?
+
+**A:** Changes are immediate for you. Other logged-in users see the change after refreshing their browser.
+
+### Q: Can I have multiple organizations?
+
+**A:** This depends on your platform configuration. Typically users belong to one organization. Contact your administrator about multi-organization setups.
+
+---
+
+## Troubleshooting
+
+### Organization information won't load
+
+**Solutions:**
+1. Click the Retry button
+2. Refresh browser (F5 or Ctrl+R)
+3. Check internet connection
+4. Log out and log back in
+5. Contact IT support if persists
+
+### Copy button doesn't work
+
+**Solutions:**
+1. Check browser clipboard permissions in settings
+2. Update browser to latest version
+3. Try different browser
+4. Manually select and copy (Ctrl+C)
+
+### Cannot save organization name
+
+**Solutions:**
+1. Ensure name is not empty
+2. Check internet connection
+3. Verify you have admin permissions
+4. Try logging out and back in
+5. Contact support with error details
+
+### Edit button doesn't appear
+
+**Cause:** Insufficient permissions
+
+**Solutions:**
+- Confirm you have administrator role
+- Contact organization owner to request permissions
+- Check Profile section to verify your role
+
+### Name change doesn't show for other users
+
+**Solutions:**
+1. Ask other users to refresh their browsers
+2. Verify your change saved successfully (check for success toast)
+3. Check if change appears when you refresh
+
+---
+
+## Responsive Design
+
+### Desktop
+- Cards centered with 900px max width
+- Side-by-side button layouts
+- Spacious padding and comfortable spacing
+
+### Tablet
+- Cards remain full width
+- Buttons stay side by side
+- Slightly reduced padding
+
+### Mobile
+- Single column layout
+- Stacked buttons (full width)
+- ID and name fields stack vertically
+- Copy/Edit buttons below their respective fields
+- Touch-friendly button sizes (44x44px minimum)
+
+---
+
+## Theme Support
+
+**Light Theme:**
+- White backgrounds
+- Light gray borders
+- Dark text for readability
+
+**Dark Theme:**
+- Semi-transparent backgrounds
+- Slate gray borders
+- Light text for comfort
+
+**Auto Theme:**
+- Detects system preference
+- Automatically switches styling
+- Seamless with OS settings
+
+---
+
+## Integration with Other Sections
+
+**Agents:**
+- Organization ID required for agent setup
+- Copy ID from here, paste in agent config
+
+**Users:**
+- All users belong to this organization
+- User permissions control edit access
+
+**Databases:**
+- All databases linked to this organization
+- Organization ID connects databases to org
+
+**Settings:**
+- Theme preference affects this page
+- Organization settings independent of user settings
+
+---
+
+## Best Practices
+
+### Organization Naming
+- Use clear, professional names
+- Keep it descriptive but concise
+- Avoid meaningless abbreviations
+- Update after rebranding or restructuring
+
+### Organization ID Management
+- Document ID in secure location
+- Share only with authorized personnel
+- Include in agent configuration templates
+- Don't hard-code in public repositories
+
+---
+
+## Summary
+
+The Organization Settings page provides access to essential organization information:
+
+✅ View and copy organization ID for agent configuration  
+✅ Edit organization name (administrators)  
+✅ Preview upcoming activity analytics features  
+✅ Responsive design for all devices  
+✅ Real-time updates across platform  
+
+**Key points:**
+- Organization ID is permanent and required for agents
+- Organization name can be changed anytime
+- Only administrators can edit organization settings
+- Changes don't affect existing agent configurations
+
+---
+
+## Quick Reference
+
+**Copy Organization ID:**
+Organization Settings → Click Copy button → ID in clipboard
+
+**Edit Organization Name:**
+Organization Settings → Click Edit → Type name → Click Save
+
+**Cancel Edit:**
+Click Cancel button or press Escape key
+
+**Retry Loading:**
+Click Retry button in error state
+
+**Get Help:**
+- Debbie AI assistant (chat button)
+- Contact IT support
+- Contact organization administrator
+
+---
+
+**End of Document**
+
+*This documentation covers all aspects of the Organization Settings page. For questions about other features, refer to their respective documentation or use the Debbie AI assistant.*

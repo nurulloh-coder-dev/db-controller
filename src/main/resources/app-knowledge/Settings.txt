@@ -1,0 +1,672 @@
+# Settings - Complete Guide
+
+**Document Type:** User Guide  
+**Section:** Settings  
+**Last Updated:** December 31, 2024  
+**Version:** 1.0  
+**Keywords:** settings, preferences, password, security, notifications, theme, language, logout, account settings
+
+---
+
+## Overview
+
+The Settings page allows users to manage their account preferences, security settings, and application behavior. Users can change their password, configure notifications, select display theme and language, and logout from their account.
+
+**Purpose:** Customize your experience and manage account security.
+
+**Who uses this:** All authenticated users can access and modify their own settings.
+
+**Location:** Accessible from the sidebar by clicking "Settings" (gear icon).
+
+---
+
+## What is the Settings Page?
+
+The Settings page is organized into sections, each managing different aspects of your account:
+
+1. **Security** - Change password
+2. **Notifications** - Email notification preferences
+3. **Preferences** - Theme and language settings
+4. **Account** - Logout option
+
+**Key concept:** Settings are saved automatically and apply immediately (no save button required for most settings).
+
+---
+
+## Page Layout
+
+### Settings Card Structure
+
+Each settings section features:
+- **Section header**: Icon, title, and description
+- **Settings items**: Individual controls for each setting
+- **Visual separation**: Sections separated by lines
+
+**Sections displayed:**
+- Security (lock icon)
+- Notifications (bell icon)
+- Preferences (message bubble icon)
+- Account (user icon)
+
+---
+
+## Security Section
+
+### Change Password
+
+**Purpose:** Update your account password for security.
+
+**Location:** Security section → "Change Password" item
+
+**How to change password:**
+
+**Question:** How do I change my password?
+
+**Answer:** Click "Change" button, verify your current password, then set a new one.
+
+### Password Change Process
+
+**Step 1: Click Change Button**
+- Opens password change modal
+- Two-step verification process begins
+
+**Step 2: Verify Current Password**
+- **Modal appears:** "Change Password"
+- **Instruction:** "Please enter your current password to continue"
+- **Input field:** Enter your current password
+- **Eye icon:** Click to show/hide password
+- **Buttons:**
+  - **Cancel**: Closes modal without changes
+  - **Continue**: Verifies password and proceeds
+
+**Important Security Feature:**
+- You have **5 attempts** to enter correct current password
+- After each incorrect attempt, warning shows remaining attempts
+- **After 5 failed attempts**: Automatically logged out for security
+- Warning message: "Warning: X attempt(s) remaining before logout"
+
+**Step 3: Set New Password**
+
+After successful verification:
+- **Modal updates:** "Set New Password"
+- **Instruction:** "Choose a strong password for your account"
+- **Two input fields:**
+  - New Password (minimum 8 characters)
+  - Confirm New Password (must match)
+- **Eye icons:** Show/hide each password field
+- **Real-time validation:**
+  - ✓ At least 8 characters (turns green when met)
+  - ✓ Passwords match (turns green when met)
+
+**Password Requirements:**
+- Minimum 8 characters
+- Can include letters, numbers, special characters
+- No maximum length
+- Must match in both fields
+
+**Buttons:**
+- **Back**: Returns to verification step
+- **Save Password**: Updates your password
+
+**Step 4: Save Process**
+- Click "Save Password"
+- Button shows "Saving..." while processing
+- On success:
+  - Success toast: "Password changed successfully!"
+  - Modal closes after 1.5 seconds
+  - New password active immediately
+- On failure:
+  - Error toast: "Failed to update password. Please try again."
+  - Can retry without leaving modal
+
+### Password Change Tips
+
+**Best practices:**
+- Choose strong, unique password
+- Use mix of characters (letters, numbers, symbols)
+- Don't reuse old passwords
+- Don't share password with anyone
+- Change password regularly
+
+**Common issues:**
+- **Forgot current password**: Contact administrator to reset
+- **New password rejected**: Ensure it's at least 8 characters
+- **Passwords don't match**: Check both fields carefully
+- **Too many failed attempts**: You'll be logged out - log back in to try again
+
+---
+
+## Notifications Section
+
+### Email Notifications
+
+**Purpose:** Control whether you receive email notifications about database changes.
+
+**Location:** Notifications section → "Email Notifications" toggle
+
+**What it controls:**
+
+When **enabled** (toggle ON - purple):
+- ✉️ Receive email when added to a database
+- ✉️ Receive email when removed from database
+- ✉️ Receive email when database roles change
+- ✉️ Receive email about database membership updates
+
+When **disabled** (toggle OFF - gray):
+- No email notifications sent
+- You can still see changes in the platform
+- Silent mode for all database notifications
+
+**How to toggle:**
+- Click the toggle switch
+- Changes apply immediately
+- No confirmation needed
+- Setting saved automatically
+
+**Toggle states:**
+- **OFF (gray)**: Email notifications disabled
+- **ON (purple gradient)**: Email notifications enabled
+
+**Use cases:**
+
+**Enable notifications when:**
+- You want to stay informed about database changes
+- You work with multiple databases
+- You need immediate alerts for access changes
+- You're not always logged into the platform
+
+**Disable notifications when:**
+- You prefer checking updates manually
+- Email inbox gets too cluttered
+- You're on vacation/leave
+- You only use platform directly
+
+**Note:** Disabling email notifications does not affect in-platform notifications or your ability to access databases. It only controls email delivery.
+
+---
+
+## Preferences Section
+
+### Language Selection
+
+**Purpose:** Choose your preferred language for the interface.
+
+**Location:** Preferences section → "Language" dropdown
+
+**Available languages:**
+- **English** (en)
+- **O'zbek** (uz) - Uzbek
+- **Русский** (ru) - Russian
+
+**How to change language:**
+1. Click the language dropdown
+2. Select desired language from list
+3. Interface updates immediately
+4. **No page refresh required**
+5. Setting saved automatically
+
+**What changes:**
+- Interface text and labels
+- Button text
+- Menu items
+- Error messages
+- Toast notifications
+- Modal content
+
+**What doesn't change:**
+- Your data (database names, usernames, etc.)
+- User-generated content
+- Documentation links
+
+### Theme Selection
+
+**Purpose:** Choose visual appearance of the interface.
+
+**Location:** Preferences section → "Theme" dropdown
+
+**Available themes:**
+- **Light** - Bright, white background theme
+- **Dark** - Dark background, easier on eyes in low light
+- **Auto** - Default theme (not system-based)
+
+**Theme descriptions:**
+
+**Light Theme:**
+- White/light gray backgrounds
+- Dark text for readability
+- Best for bright environments
+- Professional, clean appearance
+- High contrast for clarity
+
+**Dark Theme:**
+- Dark blue/gray backgrounds
+- Light text (white/light gray)
+- Reduces eye strain in dim lighting
+- Modern, sleek appearance
+- Purple/violet accent colors
+
+**Auto Theme:**
+- Default theme when first logging in
+- Consistent baseline appearance
+- Not tied to system preferences
+- Good balance for all environments
+
+**How to change theme:**
+1. Click the theme dropdown
+2. Select desired theme
+3. Interface updates immediately
+4. No page refresh required
+5. Setting saved automatically
+
+**Theme applies to:**
+- All pages in the platform
+- Cards and modals
+- Buttons and controls
+- Text and backgrounds
+- Icons and borders
+
+**Note:** "Auto" is the default theme, not a system-following automatic theme. Choose Light or Dark for specific appearance preferences.
+
+---
+
+## Account Section
+
+### Logout
+
+**Purpose:** Sign out of your account securely.
+
+**Location:** Account section → "Logout" button
+
+**How to logout:**
+
+**Question:** How do I logout?
+
+**Answer:** Click the Logout button and confirm in the modal dialog.
+
+**Logout process:**
+
+**Step 1: Click Logout Button**
+- Red "Logout" button with logout icon
+- Opens confirmation modal
+
+**Step 2: Confirmation Modal**
+- **Modal appears:** "Logout"
+- **Icon:** Red circle with logout symbol
+- **Message:** "Are you sure you want to logout? You'll need to login again to access your account."
+- **Two buttons:**
+  - **Cancel**: Closes modal, stays logged in
+  - **Logout**: Confirms logout
+
+**Step 3: Logout Completion**
+- Clears all session data
+- Removes authentication tokens
+- Redirects to login page
+- Success message: "Logged out successfully"
+
+**What happens on logout:**
+- ✓ Session cleared
+- ✓ Authentication removed
+- ✓ Redirected to login
+- ✓ Must log back in to access account
+- ✓ Unsaved work may be lost
+
+**Security note:** Always logout when:
+- Using shared or public computers
+- Leaving workstation unattended
+- Finishing work session
+- Switching to different account
+
+**Closing modal:**
+- Click Cancel button
+- Click outside modal (on dark overlay)
+- Press Escape key (if supported)
+
+---
+
+## Common Questions
+
+### Q: Why do I need to verify my current password to change it?
+
+**A:** This is a security measure to ensure only you (the account owner) can change the password. It protects your account even if someone gains temporary access to your logged-in session.
+
+### Q: What happens after 5 failed password attempts?
+
+**A:** For security, you'll be automatically logged out after 5 incorrect password attempts. This prevents unauthorized password changes. Simply log back in and try again.
+
+### Q: Can I use my old password as my new password?
+
+**A:** While technically possible, this is not recommended for security. Choose a new, unique password when changing it.
+
+### Q: How do I reset my password if I forgot it?
+
+**A:** If you can't remember your current password, contact your system administrator for a password reset. The change password feature requires knowing your current password.
+
+### Q: Will changing settings affect other users?
+
+**A:** No. Settings are personal to your account. Theme, language, and notification preferences only affect your view and experience.
+
+### Q: Do settings sync across devices?
+
+**A:** Yes. Your settings are saved and will apply when you log in from any device or browser.
+
+### Q: What if I disable email notifications but need them back?
+
+**A:** Simply toggle the Email Notifications switch back on. You'll immediately start receiving emails for future database changes.
+
+### Q: Does the theme affect performance?
+
+**A:** No. Theme choice is purely visual and does not impact platform performance or loading speed.
+
+### Q: Can administrators see my settings?
+
+**A:** Administrators may have access to some account settings for support purposes, but your password is encrypted and not visible to anyone.
+
+### Q: What happens to my settings when I logout?
+
+**A:** Settings are preserved. When you log back in, all your preferences (theme, language, notifications) remain as you set them.
+
+### Q: Can I change multiple settings at once?
+
+**A:** Yes. You can change theme, language, and notifications in any order without saving. Each setting applies immediately.
+
+### Q: Does language change affect date formats?
+
+**A:** Language selection changes interface text but may not change date/time formats throughout the entire platform. Some formats may remain consistent across languages.
+
+---
+
+## Troubleshooting
+
+### Issue: Can't change password - verification fails
+
+**Symptoms:**
+- Current password marked as incorrect
+- Can't proceed to new password step
+- Losing attempts
+
+**Solutions:**
+1. **Check password carefully:**
+   - Use eye icon to reveal password
+   - Check for typos
+   - Verify caps lock is off
+   - Check for extra spaces
+
+2. **If truly forgotten:**
+   - Contact administrator for reset
+   - Don't waste all 5 attempts
+   - Save remaining attempts for when you remember
+
+3. **After 5 failures:**
+   - You'll be logged out automatically
+   - Log back in with correct credentials
+   - Try password change again
+
+### Issue: Password modal won't open
+
+**Symptoms:**
+- Clicking Change does nothing
+- Modal doesn't appear
+- Button seems unresponsive
+
+**Solutions:**
+1. Refresh the page
+2. Check if another modal is already open
+3. Clear browser cache
+4. Try different browser
+5. Check browser console for errors (F12)
+
+### Issue: New password not accepted
+
+**Symptoms:**
+- Can't save new password
+- Validation requirements not met
+- Error when clicking Save
+
+**Solutions:**
+1. **Check requirements:**
+   - Minimum 8 characters (watch for green checkmark)
+   - Passwords must match (watch for green checkmark)
+   
+2. **Common mistakes:**
+   - Password too short (under 8 characters)
+   - Passwords don't match exactly
+   - Extra spaces at beginning or end
+
+3. **Fix:**
+   - Clear both fields
+   - Type carefully
+   - Use eye icon to verify
+   - Ensure both checkmarks are green
+
+### Issue: Settings not saving
+
+**Symptoms:**
+- Theme changes but reverts on refresh
+- Language resets after logout
+- Notifications toggle doesn't stick
+
+**Solutions:**
+1. Check internet connection
+2. Ensure you're still logged in (session not expired)
+3. Try changing setting again
+4. Clear browser cache and try again
+5. Log out and log back in
+6. Contact support if persists
+
+### Issue: Email notifications not working
+
+**Symptoms:**
+- Toggle is ON but no emails received
+- Missing database change notifications
+- Email settings don't seem active
+
+**Solutions:**
+1. **Check email settings:**
+   - Verify toggle is ON (purple, not gray)
+   - Check spam/junk folder
+   - Verify email address in profile is correct
+
+2. **Test:**
+   - Toggle OFF then back ON
+   - Ask admin to add you to test database
+   - Wait a few minutes for delivery
+
+3. **If still not working:**
+   - Verify email address is valid
+   - Check email provider settings
+   - Contact administrator
+
+### Issue: Logout button not working
+
+**Symptoms:**
+- Click logout but nothing happens
+- Modal doesn't appear
+- Stay logged in
+
+**Solutions:**
+1. Refresh page and try again
+2. Check if modal is behind other elements
+3. Try closing any open modals first
+4. Use browser refresh to force logout (lose unsaved work)
+5. Clear browser cache
+
+### Issue: Can't close password modal
+
+**Symptoms:**
+- Modal stuck on screen
+- X button doesn't work
+- Cancel doesn't close it
+
+**Solutions:**
+1. Click outside modal on dark background
+2. Try Cancel button again
+3. Refresh page (loses password change progress)
+4. Press F5 to reload
+5. Check browser console for errors
+
+---
+
+## Security Best Practices
+
+### Password Security
+
+**Creating strong passwords:**
+- ✅ Use at least 12 characters (more is better)
+- ✅ Mix uppercase and lowercase letters
+- ✅ Include numbers and symbols
+- ✅ Make it unique (don't reuse passwords)
+- ✅ Avoid personal information (names, birthdays)
+- ✅ Use passphrase (multiple words)
+
+**What to avoid:**
+- ❌ Common passwords (password123, admin, etc.)
+- ❌ Dictionary words alone
+- ❌ Sequential characters (123456, abcdef)
+- ❌ Same password across platforms
+- ❌ Sharing password with anyone
+- ❌ Writing passwords down
+
+### Account Security
+
+**Protect your account:**
+- Always logout on shared computers
+- Don't save passwords in public browsers
+- Enable email notifications to track access changes
+- Change password regularly (every 90 days)
+- Report suspicious activity immediately
+- Keep email address updated
+
+### Session Management
+
+**Safe practices:**
+- Logout when leaving workstation
+- Don't leave sessions open overnight
+- Use private/incognito for public computers
+- Close browser after logout on shared devices
+- Monitor active sessions if feature available
+
+---
+
+## Accessibility
+
+### Keyboard Navigation
+
+**Password modal:**
+- Tab through input fields
+- Enter key submits current step
+- Escape key closes modal (Cancel)
+- Space toggles show/hide password
+
+**Settings page:**
+- Tab through all controls
+- Space activates toggles
+- Enter opens dropdowns
+- Arrow keys navigate dropdown options
+
+### Screen Reader Support
+
+- All settings have descriptive labels
+- Toggle states announced clearly
+- Modal steps announced
+- Error messages read aloud
+- Success notifications announced
+
+---
+
+## Responsive Design
+
+### Desktop Experience
+- Full width settings card (max 900px)
+- Side-by-side button layouts
+- Comfortable spacing
+- All features accessible
+
+### Tablet Experience
+- Settings adapt to screen width
+- Dropdowns remain functional
+- Touch-friendly toggle switches
+- Modal adjusts to screen
+
+### Mobile Experience
+- Single column layout
+- Full-width controls
+- Stacked buttons in modals
+- Larger touch targets
+- Password modal optimized for small screens
+- Settings sections stack vertically
+
+---
+
+## Integration with Other Sections
+
+**Profile:**
+- Settings are per-user
+- Profile shows your name and role
+- Settings don't affect profile info
+
+**Databases:**
+- Email notifications relate to database changes
+- Settings don't control database access
+- Theme applies to database pages
+
+**Organization:**
+- Settings are personal, not organization-wide
+- Language/theme don't affect organization
+
+**Security:**
+- Password changes affect login
+- Settings logout clears all sessions
+- Email notifications provide security alerts
+
+---
+
+## Summary
+
+The Settings page provides control over your account preferences and security:
+
+✅ Change password with secure two-step verification  
+✅ Control email notifications for database changes  
+✅ Choose interface language (English, Uzbek, Russian)  
+✅ Select display theme (Light, Dark, Auto)  
+✅ Safely logout with confirmation  
+✅ All settings save automatically  
+✅ Changes apply immediately (no page refresh)  
+
+**Key points:**
+- Password change requires current password verification
+- 5 failed password attempts = automatic logout
+- Email notifications alert about database membership changes
+- Theme and language update instantly
+- Settings persist across sessions and devices
+- Logout clears all session data
+
+---
+
+## Quick Reference
+
+**Change password:**
+Settings → Security → Change → Verify current → Set new → Save
+
+**Toggle email notifications:**
+Settings → Notifications → Click toggle switch
+
+**Change language:**
+Settings → Preferences → Language dropdown → Select
+
+**Change theme:**
+Settings → Preferences → Theme dropdown → Select
+
+**Logout:**
+Settings → Account → Logout → Confirm
+
+**Failed password attempts:**
+5 attempts → Automatic logout
+
+**Password requirements:**
+Minimum 8 characters, must match confirmation
+
+---
+
+**End of Document**
+
+*This documentation covers all aspects of the Settings page. For password reset assistance when you can't remember your current password, contact your administrator.*

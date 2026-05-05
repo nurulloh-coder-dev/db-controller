@@ -1,0 +1,636 @@
+# Agent Downloads - Complete Guide
+
+**Document Type:** User Guide  
+**Section:** Agent Downloads  
+**Last Updated:** December 31, 2024  
+**Version:** 1.0  
+**Keywords:** agents, downloads, database agent, JAR file, versions, download history, agent setup, installation
+
+---
+
+## Overview
+
+The Agent Downloads page allows users to download database agent software and view download history. Agents are executable JAR files that connect to your databases and enable the platform to interact with them. This page provides access to different agent versions and tracks who downloaded which version and when.
+
+**Purpose:** Download database agents and manage agent version history.
+
+**Who uses this:** Developers, database administrators, and technical staff who need to set up database connections.
+
+**Location:** Accessible from the sidebar by clicking "Agents" (download icon).
+
+---
+
+## What are Database Agents?
+
+Database agents are Java applications (JAR files) that act as intermediaries between the platform and your databases. They:
+- Connect to your databases using provided credentials
+- Execute queries on behalf of the platform
+- Securely transmit data between databases and the platform
+- Require your organization ID to authenticate
+
+**Key concept:** Each agent must be configured with your organization ID (from Organization Settings page) and database credentials before it can connect.
+
+---
+
+## Page Layout
+
+### Two Main Sections
+
+**1. Available Versions (top)**
+- Dropdown list of all available agent versions
+- Version information (version number, file size, release date)
+- Download button to get selected version
+
+**2. Download History (bottom)**
+- Table showing all past downloads
+- Tracks version, who downloaded, and when
+- Sorted by most recent first
+
+---
+
+## Available Versions Section
+
+### Loading States
+
+**Initial load:**
+- Shows spinning loader with "Loading available versions..."
+- Fetches version list from server
+- Typically loads in 1-3 seconds
+
+**Error state:**
+- Error icon with message: "Unable to load versions"
+- Retry button to attempt loading again
+
+**Empty state:**
+- Displayed if no versions available
+- Shows "No versions available" message
+- Includes "Check back later for new releases" hint
+
+**Success state:**
+- Dropdown selector appears with all available versions
+- Each version shows: version number, file size, and release date
+- Download button becomes active when version selected
+
+### Version Selector Dropdown
+
+**Question:** How do I see what versions are available?
+
+**Answer:** Click the dropdown menu to see all available agent versions listed.
+
+**Dropdown displays:**
+- Placeholder: "Choose a version..." (when nothing selected)
+- Each version formatted as: `DB Agent v[X.X.X] - [size] - [release date]`
+- Example: `DB Agent v1.2.0 - 45.3 MB - 2 days ago`
+- Sorted by newest release first
+
+**Version information includes:**
+- **Version number:** Semantic versioning (e.g., 1.2.0)
+- **File size:** Human-readable format (MB, GB)
+- **Release date:** Relative time (e.g., "2 days ago", "1 hour ago") or absolute date
+
+**Dropdown behavior:**
+- Click to open list of versions
+- Scroll through available versions if many exist
+- Click to select a version
+- Download button activates upon selection
+
+### Download Button
+
+**States:**
+
+**Disabled (default):**
+- Gray appearance
+- Text: "Download"
+- Cannot be clicked
+- Active only when version selected
+
+**Enabled:**
+- Purple/primary color
+- Text: "Download"
+- Hover effect: lifts slightly, shadow appears
+- Click to start download
+
+**Downloading:**
+- Changes to gray
+- Text: "Downloading..."
+- Download icon shows pulsing animation
+- Button cannot be clicked again
+- Indicates download in progress
+
+**Downloaded:**
+- Temporarily shows checkmark icon
+- Text: "Downloaded"
+- Confirms successful download
+- Resets after 2 seconds
+
+### Downloading an Agent
+
+**Question:** How do I download a database agent?
+
+**Answer:** Select a version from the dropdown and click the Download button.
+
+**Step-by-step:**
+
+1. **Select version**
+   - Click the dropdown menu
+   - Choose desired agent version
+   - Download button becomes active (purple)
+
+2. **Click Download**
+   - Button changes to "Downloading..."
+   - Progress tracked in background
+   - Browser may show download progress in bottom bar
+
+3. **Wait for download**
+   - Large files may take time (agents are typically 40-60 MB)
+   - Don't close browser during download
+   - Download continues in background
+
+4. **Download completes**
+   - JAR file saves to your default downloads folder
+   - Filename format: `db-agent-[version].jar`
+   - Example: `db-agent-1.2.0.jar`
+   - Success toast: "DB Agent v[X.X.X] downloaded successfully"
+   - Button shows "Downloaded" with checkmark
+   - Download history refreshes automatically
+
+5. **Reset**
+   - After 2 seconds, button returns to normal
+   - Dropdown resets to placeholder
+   - Ready for another download
+
+**Download location:**
+- Saved to browser's default download folder
+- Usually: `Downloads` folder in your user directory
+- Check browser settings to change download location
+
+---
+
+## Download History Section
+
+### What is Download History?
+
+**Purpose:** Track who downloaded which agent versions and when. Useful for:
+- Auditing agent deployments
+- Tracking version adoption
+- Verifying team members have latest version
+- Compliance and security monitoring
+
+### Loading States
+
+**Initial load:**
+- Shows spinning loader with "Loading download history..."
+- Fetches history from server
+- Typically loads in 1-3 seconds
+
+**Error state:**
+- Error icon with message: "Unable to load history"
+- Retry button to attempt loading again
+
+**Empty state:**
+- Displayed if no downloads have occurred yet
+- Shows "No download history yet" message
+- Includes "Download an agent to see it here" hint
+
+**Success state:**
+- Table displays with all download records
+- Sorted by most recent first
+- Scrollable if many records exist
+
+### History Table
+
+**Columns:**
+
+**1. Version**
+- Shows version number/name
+- Format: version number or descriptive name
+- Example: "1.2.0", "DB Agent v1.2.0"
+- Bold purple text for emphasis
+
+**2. Downloaded By**
+- Shows name of user who downloaded
+- Typically full name from user profile
+- Example: "John Doe", "Jane Smith"
+
+**3. Download Date**
+- Shows when download occurred
+- Full date and time format
+- Example: "Dec 31, 2024, 02:30 PM"
+- Sorted newest to oldest
+
+**Table features:**
+- **Sticky header:** Column headers stay visible when scrolling
+- **Hover effect:** Rows highlight when mouse hovers
+- **Scrollable:** Max height 500px, scrolls if more records
+- **Responsive:** Adjusts for mobile devices
+
+### Reading Download History
+
+**Question:** How do I see who downloaded what?
+
+**Answer:** The history table shows all downloads with version, user, and timestamp.
+
+**Use cases:**
+
+**Verify latest version deployment:**
+- Check if team members downloaded newest version
+- Identify who needs to update their agent
+- Track version adoption timeline
+
+**Audit compliance:**
+- See who accessed agent downloads
+- Verify authorized personnel only
+- Track download patterns
+
+**Troubleshooting:**
+- Confirm if agent was actually downloaded
+- Check which version is in use
+- Verify download timing vs. deployment
+
+---
+
+## Common Questions
+
+### Q: What is a database agent?
+
+**A:** A database agent is a Java application (JAR file) that connects to your databases and enables the platform to interact with them. It acts as a secure bridge between the platform and your database servers. Specifically, it makes the process of managing users to certain databases and their restrictions to it super easy, instead of writing each manually.
+
+### Q: Which version should I download?
+
+**A:** Generally, download the newest version (shown first in the dropdown). Newer versions include:
+- Latest features
+- Bug fixes
+- Security updates
+- Performance improvements
+
+Check with your team lead or administrator if you need a specific version for compatibility reasons.
+
+Refer to agent documentation for detailed setup instructions.
+
+### Q: Can I download multiple versions?
+
+**A:** Yes. You can download as many versions as needed. Each download:
+- Creates a separate JAR file
+- Is tracked in download history
+- Can be used independently
+
+This is useful for testing different versions or maintaining multiple environments.
+
+### Q: Do I need Java installed to use agents?
+
+**A:** Yes. Database agents are Java applications (JAR files) and require:
+- Java Runtime Environment (JRE) version 11 or higher
+- Or Java Development Kit (JDK) version 11 or higher
+- Check Java version: `java -version`
+
+### Q: What if I download the wrong version?
+
+**A:** No problem. Simply:
+1. Delete the downloaded file
+2. Select correct version from dropdown
+3. Download again
+4. All downloads are tracked in history
+
+### Q: Why is the download taking so long?
+
+**A:** Agent files are typically 40-60 MB. Download time depends on:
+- Internet connection speed
+- Server load
+- Network congestion
+
+On average:
+- Fast connection: 10-30 seconds
+- Moderate connection: 1-2 minutes
+- Slow connection: 3-5 minutes
+
+The download continues in background. Don't close browser until complete.
+
+### Q: Can I download agents on behalf of others?
+
+**A:** Technically yes, but each download is recorded under your name in the history. Best practice:
+- Each user downloads their own copy
+- Ensures accurate audit trail
+- Proper accountability
+
+If you must download for others, note this in your team documentation.
+
+### Q: Where can I find the organization ID needed for agent setup?
+
+**A:** Navigate to Organization Settings page (sidebar → Organization). Copy the organization ID from the first field. This ID is required when configuring your agent.
+
+### Q: What happens if no versions are available?
+
+**A:** You'll see an empty state message. This might happen if:
+- No versions have been published yet
+- Server is being updated
+- Temporary service issue
+
+Check back later or contact your administrator.
+
+### Q: Can I delete download history?
+
+**A:** No. Download history is permanent for audit and compliance purposes. All downloads are tracked and cannot be removed.
+
+### Q: Does download history show failed downloads?
+
+**A:** No. Only successful downloads are recorded in the history. Failed download attempts are not tracked.
+
+---
+
+## Troubleshooting
+
+### Issue: Version list won't load
+
+**Symptoms:**
+- Loading spinner never stops
+- Error message appears
+- Dropdown remains empty
+
+**Solutions:**
+1. Click Retry button in error state
+2. Refresh browser page (F5 or Ctrl+R)
+3. Check internet connection
+4. Clear browser cache
+5. Try different browser
+6. Contact IT support if persists
+
+### Issue: Download button stays disabled
+
+**Symptoms:**
+- Button remains gray after selecting version
+- Cannot click Download button
+- Version selected but button inactive
+
+**Solutions:**
+1. Ensure version is actually selected (not just hovered)
+2. Refresh page and try again
+3. Try different version
+4. Clear browser cache
+5. Check browser console for errors (F12)
+
+### Issue: Download fails or stops
+
+**Symptoms:**
+- Download starts but doesn't complete
+- Browser shows download error
+- File is incomplete or corrupted
+
+**Solutions:**
+1. Check available disk space
+2. Disable browser extensions temporarily
+3. Try different browser
+4. Check internet connection stability
+5. Download during off-peak hours
+6. Contact support if file consistently fails
+
+### Issue: Downloaded file won't open
+
+**Symptoms:**
+- JAR file won't execute
+- Error when trying to run agent
+- "Cannot open file" message
+
+**Solutions:**
+1. Verify Java is installed: `java -version`
+2. Download file again (may be corrupted)
+3. Check file extension is `.jar` not `.zip` or other
+4. Right-click file → Open with → Java
+5. Try command line: `java -jar filename.jar`
+6. Ensure file downloaded completely (check size)
+
+### Issue: Download history empty but I downloaded
+
+**Symptoms:**
+- Downloaded agent successfully
+- History shows "No download history yet"
+- Download not recorded
+
+**Possible causes:**
+- Download failed silently
+- Session issue during download
+- Server didn't record download
+
+**Solutions:**
+1. Download again to ensure it's recorded
+2. Refresh history section
+3. Check with administrator if downloads are being tracked
+4. Verify download actually completed (check file size)
+
+### Issue: Cannot see newest version
+
+**Symptoms:**
+- Dropdown doesn't show latest version
+- Version list seems outdated
+- Missing known new releases
+
+**Solutions:**
+1. Refresh page to reload version list
+2. Clear browser cache
+3. Check with administrator if new version is published
+4. Verify you're looking at correct environment
+
+### Issue: Download history not updating
+
+**Symptoms:**
+- Made new download but history doesn't show it
+- History seems frozen
+- Latest download missing
+
+**Solutions:**
+1. Refresh browser page
+2. Wait 30 seconds and check again (may be delayed)
+3. Check if download actually completed successfully
+4. Look at timestamp of latest entry
+5. Click retry button on history section
+
+---
+
+## File Information
+
+### Agent File Details
+
+**File format:** JAR (Java Archive)  
+**File naming:** `db-agent-[version].jar`  
+**Typical size:** 40-60 MB  
+**Requires:** Java 11 or higher  
+
+**Example filenames:**
+- `db-agent-1.0.0.jar`
+- `db-agent-1.2.0.jar`
+- `db-agent-2.0.0.jar`
+
+### File Verification
+
+**Check file integrity:**
+1. Compare file size with size shown in dropdown
+2. Verify file extension is `.jar`
+3. Try opening with Java to test
+4. Check download completed without errors
+
+**File corruption indicators:**
+- File size doesn't match expected size
+- File won't open or execute
+- Error messages when running
+- Download interrupted or failed
+
+**If file is corrupted:**
+- Delete the file
+- Download again
+- Ensure stable internet connection
+- Check available disk space
+
+---
+
+## Best Practices
+
+### Version Management
+
+**Recommended approach:**
+- Always use the latest version unless told otherwise
+- Test new versions in development environment first
+- Keep track of which version each environment uses
+- Document version updates in team notes
+
+**Version upgrade strategy:**
+1. Download new version
+2. Test in non-production environment
+3. Verify compatibility with databases
+4. Deploy to production after testing
+5. Monitor for issues
+
+### Download Organization
+
+**File management tips:**
+- Rename files with environment suffix if needed
+- Example: `db-agent-1.2.0-production.jar`
+- Store in organized folder structure
+- Keep backup of working versions
+- Document which version is deployed where
+
+**Folder structure example:**
+```
+agents/
+  ├── production/
+  │   └── db-agent-1.2.0.jar
+  ├── staging/
+  │   └── db-agent-1.1.0.jar
+  └── development/
+      └── db-agent-1.3.0-beta.jar
+```
+
+### Security Considerations
+
+**Safe practices:**
+- Download only from official platform
+- Verify file integrity before deployment
+- Store downloaded files securely
+- Limit access to agent files
+- Track who has which versions
+
+**What to avoid:**
+- Downloading from unofficial sources
+- Sharing agent files publicly
+- Running unknown/unverified versions
+- Keeping old vulnerable versions
+
+### Team Coordination
+
+**Communication:**
+- Inform team when downloading new version
+- Coordinate updates across environments
+- Document version changes
+- Share any issues encountered
+
+**Documentation:**
+- Maintain version inventory
+- Track deployment dates
+- Note configuration changes per version
+- Record any compatibility issues
+
+---
+
+## Responsive Design
+
+### Desktop Experience
+- Full-width cards with comfortable spacing
+- Dropdown easily accessible
+- Table shows all columns clearly
+- Smooth scrolling for long history
+
+### Tablet Experience
+- Cards adapt to screen width
+- Dropdown remains functional
+- Table columns may adjust
+- Touch-friendly buttons
+
+### Mobile Experience
+- Single column layout
+- Full-width dropdown and buttons
+- Table adapts for small screen
+- Larger touch targets
+- Horizontal scroll if needed for table
+- Font sizes adjusted for readability
+
+---
+
+## Integration with Other Sections
+
+**Organization Settings:**
+- Organization ID copied from there
+- Required for agent configuration
+- Both sections work together for agent setup
+
+**Databases:**
+- Agents connect to databases managed here
+- Database credentials needed for agent config
+- Agent enables database functionality
+
+**Users:**
+- Download history shows which users downloaded
+- User names from Users section
+- Permissions may control download access
+
+---
+
+## Summary
+
+The Agent Downloads page enables you to download and track database agent software:
+
+✅ Download latest or specific agent versions  
+✅ View detailed version information (size, date)  
+✅ Track download history for audit purposes  
+✅ See who downloaded which version and when  
+✅ Quick access to agent files needed for setup  
+✅ Automatic history updates after downloads  
+
+**Key points:**
+- Agents are JAR files requiring Java to run
+- Always download newest version unless specified otherwise
+- Organization ID required for agent configuration
+- All downloads tracked in permanent history
+- Files typically 40-60 MB in size
+
+---
+
+## Quick Reference to how to install and run Agent
+
+**Download an agent:**
+Agent Downloads → Select version → Click Download → Save file
+
+**Check download history:**
+Agent Downloads → Scroll to Download History table
+
+**Get organization ID:**
+Organization Settings → Copy organization ID → Use in agent config
+
+**Run downloaded agent:**
+Command line: `java -jar its path to where it is located db-agent-[version].jar --spring.config.location="file:[Absolute path of the application config that you want to run (example: "file:C:/Users/Hp/IdeaProjects/Agent/src/main/resources/application.yml")]" `
+
+** Finally run it **
+press enter and wait look for a log that says Agent successfully initialized and you are all done.
+
+---
+
+**End of Document**
+
+*This documentation covers all aspects of the Agent Downloads page. For agent configuration and setup instructions, refer to agent-specific documentation or contact your administrator.*

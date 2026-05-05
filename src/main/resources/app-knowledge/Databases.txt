@@ -1,0 +1,204 @@
+# Database Management Section Documentation
+
+## Overview
+The Database Management section provides a centralized interface for managing all your PostgreSQL databases, controlling user access, and assigning database-specific roles and permissions. This is where administrators configure who can access each database and what level of permissions they have.
+
+## Accessing the Database Section
+- **Location**: Click "Databases" in the left sidebar (database cylinder icon)
+- **Purpose**: View and manage all configured database connections and their members
+
+## What You'll See
+
+### Database Cards
+All your configured databases are displayed as cards in a grid layout. Each card shows:
+
+1. **Database Name**: The name of your database
+2. **Member Count**: Total number of users with access to this database
+3. **Member List**: All users currently assigned to this database
+4. **Add Member Button**: Quick access to add new users
+
+### Member Information
+For each member in a database, you can see:
+- Their authentication username
+- Quick action buttons to edit or remove them (visible when hovering over their name)
+
+## Adding Members to a Database
+
+### Process Overview
+Adding a member is a 2-step process:
+
+**Step 1: Select User**
+- Search for an existing user by name, username, or email
+- Select the user you want to add to the database
+
+**Step 2: Configure Access**
+- Set a database-specific username
+- Create a database-specific password
+- Assign database roles (permissions)
+
+### Database Credentials
+Each user needs database-specific credentials:
+- **Database Username**: Must contain only letters, numbers, and underscores
+- **Database Password**: Should be strong and unique
+- These credentials are separate from their main login credentials
+
+### Database Roles
+Roles define what actions a member can perform in the database:
+- View available roles by clicking the expand button
+- Select multiple roles to assign to the user
+- Each role has a name and description explaining its permissions
+- Selected roles appear in a "Selected Roles" section
+- Remove roles by clicking the × button next to them
+
+### Important Notes
+- All fields (username, password) are required
+- Database usernames cannot contain spaces or special characters
+- You must select at least one role for the user
+
+## Viewing Member Details
+
+Click on any member's name to open a detailed view showing:
+
+**Left Panel - Authentication Information**
+- Full name
+- Username
+- Email address
+- Phone number
+- System role (their platform-wide role)
+
+**Right Panel - Database Information**
+- Database-specific username
+- All assigned database roles with descriptions
+
+## Editing Members
+
+### What You Can Edit
+- **Database Roles Only**: You can add or remove database roles
+- Other information (username, password) is read-only after creation
+
+### How to Edit
+1. Click the edit button (pencil icon) next to a member's name
+2. The edit modal shows current database username and password (masked)
+3. Use the expand button to view all available roles
+4. Add roles by clicking them in the expanded view
+5. Remove roles by clicking × next to them in the selected list
+6. Click "Save Changes" to apply
+
+### Role Management
+- Changes only save if you've actually modified the roles
+- If no changes are made, you'll see a confirmation without updating the database
+- The expand modal shows which roles are already assigned (marked with a checkmark)
+
+## Removing Members
+
+### Deletion Process
+1. Click the delete button (trash icon) next to a member's name
+2. A confirmation modal appears with a 3-second countdown
+3. The modal shows:
+   - Warning that the action cannot be undone
+   - Member name being removed
+   - Database name they're being removed from
+4. Wait for the countdown, then click "Delete Member"
+
+### What Happens
+- The member loses all access to that specific database immediately
+- Their database username and associated roles are removed
+- This does NOT delete their main platform account
+- They remain in the system and can be re-added later
+
+## Modal Features
+
+### Roles Expand Modal
+- Opens to the side of the main modal
+- Shows all available database roles for that database
+- Allows easy browsing and selection of roles
+- Displays role descriptions to help you choose appropriate permissions
+- Indicates which roles are already selected
+- Click roles to add them, or click the close button to return
+
+### Visual Feedback
+Throughout the database section, you'll see:
+- **Loading states**: When data is being retrieved
+- **Empty states**: When there are no databases or members
+- **Success toasts**: When operations complete successfully
+- **Error toasts**: If something goes wrong
+- **Hover effects**: Interactive elements highlight on hover
+
+## Common Use Cases
+
+### Granting Database Access
+1. User exists in the platform but needs database access
+2. Add them as a member with appropriate credentials
+3. Assign roles matching their job requirements
+4. They can now connect to the database using those credentials
+
+### Updating Permissions
+1. User's responsibilities change
+2. Edit their member entry
+3. Add or remove roles as needed
+4. Changes take effect immediately
+
+### Revoking Access
+1. User no longer needs database access
+2. Delete them from the database members
+3. They lose access instantly
+4. Can be re-added later if needed
+
+## Security Considerations
+
+- Each user has separate database credentials from their login credentials
+- Database passwords are not shown after creation
+- Role assignments follow the principle of least privilege
+- All actions are logged and tracked
+- Deletion requires explicit confirmation
+
+## Tips for Best Practices
+
+1. **Database Usernames**: Use clear, identifiable names (e.g., "john_doe_dev")
+2. **Role Assignment**: Only assign roles users actually need
+3. **Regular Audits**: Review member lists periodically
+4. **Password Security**: Use strong, unique passwords for database access
+5. **Documentation**: Keep track of why users have specific role combinations
+
+## Theme Support
+
+The database section fully supports all theme modes:
+- **Light Mode**: Clean, bright interface
+- **Dark Mode**: Easy on the eyes for extended use
+- **Auto Mode**: Matches your system preferences
+
+All modals, cards, and interactive elements adapt to your chosen theme.
+
+## Troubleshooting
+
+### Cannot Add Member
+- Verify the user exists in the system
+- Ensure database username follows naming rules (letters, numbers, underscores only)
+- Check that all required fields are filled
+
+### Cannot Edit Roles
+- Confirm you have appropriate permissions
+- Try refreshing the page and attempting again
+- Verify the database is still accessible
+
+### Member Not Appearing
+- Wait a moment and refresh the page
+- Check if the database card is loading properly
+- Verify the member was successfully added (check for success message)
+
+## Frequently Asked Questions
+
+**Q: Can I change a member's database password after creation?**
+A: No, database passwords cannot be changed through the interface after creation. You would need to remove and re-add the member.
+
+**Q: What's the difference between system roles and database roles?**
+A: System roles control access to the DB-Controller platform itself. Database roles control what a user can do within a specific database (like SELECT, INSERT, UPDATE permissions).
+
+**Q: Can one user have access to multiple databases?**
+A: Yes, users can be added as members to multiple databases, each with their own credentials and role assignments.
+
+**Q: Do I need to assign all available roles to a user?**
+A: No, only assign the roles needed for the user's specific tasks. This follows security best practices.
+
+**Q: What happens if I accidentally delete a member?**
+A: The deletion is permanent for that member entry. You'll need to re-add them with new credentials and role assignments.

@@ -1,0 +1,478 @@
+# Users Management Section Documentation
+
+## Overview
+The Users Management section provides a centralized interface for managing all system users within the DB-Controller platform. This is where administrators can view, create, edit, and delete user accounts, as well as manage their roles and permissions at the platform level.
+
+## Accessing the Users Section
+- **Location**: Click "Users" in the left sidebar (users icon)
+- **Purpose**: Manage all user accounts in the system
+
+## What You'll See
+
+### Page Header
+- **Title**: "Users"
+- **Subtitle**: "Manage system users"
+- **Search Bar**: Real-time search functionality to find users quickly
+- **Add User Button**: Create new user accounts (+ icon with "Add User" text)
+
+### User List
+All users are displayed in a scrollable list format with:
+- User's full name (prominently displayed)
+- Username (prefixed with @)
+- Quick action buttons (edit and delete) that appear when hovering
+
+### Visual Indicators
+- **Current User**: Your own account has no action buttons to prevent self-modification
+- **Hover Effects**: User cards highlight and show action buttons when you hover over them
+- **Search Highlighting**: Cards animate when matching search results
+
+## Searching for Users
+
+### How to Search
+1. Click the search bar at the top of the page
+2. Start typing to search by:
+   - Full name
+   - Username
+   - Email address
+3. Results update in real-time as you type
+4. Clear the search bar to see all users again
+
+### Search Behavior
+- Searches across all user fields simultaneously
+- Case-insensitive matching
+- Partial matches are supported (typing "john" will find "John Smith")
+- Empty search shows all users
+- Debounced search (300ms delay) for better performance
+
+## Viewing User Details
+
+### Opening User Details
+Click anywhere on a user card (except the action buttons) to view their full information.
+
+### Information Displayed
+The detail modal shows:
+
+**User Profile**
+- Full name
+- Username
+- Email address (with copy button)
+- Phone number (with copy button, if provided)
+- System role
+
+**Copy Functionality**
+- Click the copy button next to email or phone
+- The button briefly changes to a checkmark confirming the copy
+- Text is copied to your clipboard for easy pasting
+
+### Closing the Modal
+- Click the × button in the top right
+- Click outside the modal (on the dark overlay)
+
+## Creating New Users
+
+### Opening the Creation Form
+Click the "+ Add User" button in the top right corner of the page.
+
+### Required Information
+You must provide:
+- **Full Name**: The user's complete name
+- **Username**: A unique identifier for login (letters, numbers, underscores)
+- **Email**: Valid email address for communication
+
+### Optional Information
+- **Phone Number**: Contact phone number
+- **Role**: Select a platform role (defaults to DEVELOPER if not specified)
+
+### Available Roles
+The system provides different role levels:
+- **DEVELOPER**: Default role with standard development access
+- **Other roles**: Additional roles may be available depending on your organization
+
+The role dropdown shows all available roles. If you don't select one, DEVELOPER is automatically assigned.
+
+### Submitting the Form
+1. Fill in all required fields (marked with red asterisk *)
+2. Optionally select a role
+3. Click "Create User"
+4. Wait for confirmation
+5. The user is added to the system and appears in the list
+
+### Validation
+- All required fields must be filled
+- Email must be in valid format
+- Username must be unique in the system
+- System validates all inputs before creating the user
+
+## Editing Users
+
+### Opening the Edit Form
+Click the edit button (pencil icon) that appears when hovering over a user card.
+
+### What You Can Edit
+All user information can be updated:
+- Full name
+- Username
+- Email address
+- Phone number
+- System role
+
+### Edit Form Pre-population
+When the edit modal opens:
+- All current information is pre-filled
+- Current role is pre-selected
+- You can modify any field
+
+### Saving Changes
+1. Modify the information as needed
+2. Click "Save Changes"
+3. Wait for confirmation
+4. Changes are applied immediately
+
+### Important Notes
+- You cannot edit your own account (no edit button appears)
+- Username changes affect the user's login credentials
+- Email changes affect where system notifications are sent
+- Role changes immediately affect the user's permissions
+
+## Deleting Users
+
+### Initiating Deletion
+Click the delete button (trash icon) that appears when hovering over a user card.
+
+### Confirmation Process
+A safety modal appears with:
+- **3-second countdown**: You must wait before the delete button activates
+- **Warning message**: Clear indication that this action cannot be undone
+- **User information**: Shows which user will be deleted (name and username)
+
+### Completing Deletion
+1. Wait for the 3-second countdown to complete
+2. The "Delete User" button becomes active
+3. Click "Delete User" to confirm
+4. The user is permanently removed
+
+### What Happens
+- The user account is completely deleted
+- All their access permissions are revoked
+- They can no longer log into the system
+- Their database memberships (if any) remain but become orphaned
+- This action cannot be undone
+
+### Safety Features
+- Cannot delete yourself (your account has no delete button)
+- Countdown prevents accidental deletion
+- Clear warning messages
+- Double confirmation required
+
+## Loading States
+
+### When Loading Users
+You'll see:
+- A loading spinner
+- "Loading users..." message
+- The interface is non-interactive during loading
+
+### If Loading Fails
+An error state appears with:
+- Error icon
+- "Failed to load users" message
+- Retry button to attempt loading again
+
+### Empty State
+If no users exist (unlikely in a functioning system):
+- Shows an empty state icon
+- "No users found" message
+
+## User Roles Explained
+
+### Role Purpose
+Roles determine what a user can do within the platform:
+- Access to different sections
+- Ability to perform certain actions
+- Visibility of features and data
+
+### Role Assignment
+- Assigned during user creation
+- Can be changed later through editing
+- Defaults to DEVELOPER if not specified
+- Each user can have one role at a time
+
+### Role Display
+- Shown in user detail modal
+- Color-coded badge format
+- Clearly labeled for easy identification
+
+## Common Workflows
+
+### Onboarding a New Team Member
+1. Click "+ Add User"
+2. Enter their name, username, and email
+3. Add their phone number (optional)
+4. Select their appropriate role
+5. Click "Create User"
+6. Inform them their account is created
+7. They can now log in with their username
+
+### Updating User Information
+1. Search for the user if needed
+2. Click the edit button on their card
+3. Update the necessary information
+4. Click "Save Changes"
+5. Changes take effect immediately
+
+### Offboarding a User
+1. Find the user in the list
+2. Click the delete button
+3. Wait for the 3-second countdown
+4. Confirm deletion
+5. User is removed from the system
+
+### Finding a Specific User
+1. Use the search bar at the top
+2. Type their name, username, or email
+3. Click on their card to view details
+4. Use action buttons to edit or delete if needed
+
+## Best Practices
+
+### User Creation
+- Use clear, professional full names
+- Choose descriptive usernames that identify the person
+- Use company email addresses when possible
+- Add phone numbers for important contacts
+- Assign appropriate roles based on job function
+
+### User Management
+- Regularly review the user list for accuracy
+- Update information promptly when it changes
+- Remove accounts for users who leave the organization
+- Search before creating to avoid duplicate accounts
+- Document role assignments for audit purposes
+
+### Security Considerations
+- Delete unused accounts promptly
+- Verify user identity before making changes
+- Review role assignments periodically
+- Use the search function to audit user access
+- Keep contact information current
+
+## Search Tips
+
+### Effective Searching
+- Type partial names for quick results
+- Use username if you know it (starts with @)
+- Search by email domain to find all users from a company
+- Clear search to browse all users
+- Use filters before searching for better results
+
+### Search Performance
+- Results appear instantly as you type
+- Search is optimized for large user lists
+- No need to press Enter (auto-search)
+- 300ms delay prevents excessive queries
+
+## Error Handling
+
+### Common Errors
+
+**"Failed to load users"**
+- Network connectivity issue
+- Server temporarily unavailable
+- Click "Retry" to attempt again
+
+**"Could not create user"**
+- Username already exists
+- Invalid email format
+- Missing required fields
+- Server validation failed
+
+**"Could not update user"**
+- Username conflict with another user
+- Invalid data format
+- Network interruption
+
+**"Could not delete user"**
+- User is referenced in other systems
+- Permission denied
+- Network error
+
+### What to Do
+- Read the error message carefully
+- Check your inputs for validity
+- Ensure network connection
+- Try again after correcting issues
+- Contact support if errors persist
+
+## Interface Features
+
+### Interactive Elements
+- **Hover Effects**: Cards highlight and reveal action buttons
+- **Animations**: Smooth transitions for better user experience
+- **Real-time Feedback**: Buttons change state during operations
+- **Toast Notifications**: Success and error messages appear in top-right
+
+### Responsive Design
+- List adjusts to screen size
+- Scrollable when many users exist
+- Optimized for different devices
+- Touch-friendly for tablets
+
+### Accessibility
+- Keyboard navigation supported
+- Clear visual feedback
+- Readable text contrasts
+- Icon labels for screen readers
+
+## Theme Support
+
+The Users section fully supports all theme modes:
+- **Light Mode**: Clean, bright interface with white backgrounds
+- **Dark Mode**: Easy on the eyes with dark backgrounds
+- **Auto Mode**: Matches your system preferences
+
+All cards, modals, and buttons adapt to your chosen theme.
+
+## Keyboard Shortcuts
+
+While focused on search bar:
+- **Type**: Start searching immediately
+- **Escape**: Clear search
+- **Enter**: No action (search is automatic)
+
+In modals:
+- **Escape**: Close modal
+- **Tab**: Navigate between fields
+- **Enter**: Submit form (in input fields)
+
+## Mobile Experience
+
+On mobile devices:
+- Cards stack vertically
+- Touch to open user details
+- Tap action buttons directly (no hover needed)
+- Modals take full screen
+- Search bar expands when tapped
+
+## Data Refresh
+
+### When User Data Updates
+- After creating a user: List automatically refreshes
+- After editing a user: List updates immediately
+- After deleting a user: Card is removed instantly
+- When switching to Users page: Fresh data is loaded
+
+### Manual Refresh
+If needed, you can refresh by:
+- Navigating away and back to Users page
+- Using the retry button if an error occurred
+
+## Important Notes
+
+### Current User Restrictions
+- You cannot edit your own account from the Users section
+- You cannot delete your own account
+- Use the Profile section to modify your own information
+- These restrictions prevent accidental self-lockout
+
+### Username Uniqueness
+- Every username must be unique across the system
+- Usernames are case-insensitive for uniqueness checks meaning Annie and annie is not considered same and it is permissible.
+- Choose usernames carefully as they identify users throughout the platform
+
+### Email Importance
+- Primary communication channel for system notifications
+- Must be valid and monitored
+- Used for password resets and security alerts
+- Unique email per user recommended
+
+### Role Impact
+- Changing a role immediately affects user permissions
+- Test role changes in non-production environments first
+- Document role change reasons for compliance
+- Users may need to log out and back in for some role changes
+
+## Integration with Other Sections
+
+### Relationship to Databases Section
+- Users created here can be added as database members
+- Database membership is managed in the Databases section
+- Deleting a user doesn't automatically remove database access
+- User roles here are separate from database roles
+
+### Relationship to Profile Section
+- Your own account information is edited in Profile
+- Users section is for managing other users
+- Profile changes don't require the same permissions
+
+### Relationship to Organization
+- All users belong to your organization
+- User count affects subscription limits
+- Organization settings may restrict user creation
+
+## Troubleshooting
+
+### User Not Appearing After Creation
+- Wait a moment and check again
+- Refresh the page
+- Search for the user by name or email
+- Check if creation actually succeeded (look for success message)
+
+### Cannot Edit User
+- Verify you have appropriate permissions
+- Check if the user is your own account (cannot self-edit here)
+- Ensure you're clicking the edit button, not the card itself
+
+### Delete Button Not Working
+- Wait for the 3-second countdown to complete
+- Ensure you're clicking "Delete User" not "Cancel"
+- Check for error messages if deletion fails
+
+### Search Not Finding User
+- Check spelling of search terms
+- Try searching by different fields (name, username, email)
+- Clear search and browse manually
+- Verify the user actually exists in the system
+
+## Tips for Large User Lists
+
+### Managing Many Users
+- Use search extensively to find specific users
+- Scroll smoothly through the list
+- List is virtualized for performance with hundreds of users
+- Action buttons only on hover reduces visual clutter
+
+### Batch Operations
+Currently, users must be managed one at a time:
+- No bulk deletion
+- No bulk editing
+- No multi-select functionality
+- Plan accordingly for large changes
+
+## Frequently Asked Questions
+
+**Q: Can I change my own username here?**
+A: No, use the Profile section to modify your own account information.
+
+**Q: What happens if I delete a user who is a database member?**
+A: When the user that has membership in ay database, the system automatically removes all user related memberships from every database.
+
+**Q: Can usernames be reused after deletion?**
+A: Yes, once a user is deleted, their username becomes available again.
+
+**Q: How do I know which role to assign?**
+A: Roles determine platform access levels. Consult your organization's access control policy. When in doubt, use DEVELOPER as it's the default role.
+
+**Q: Can users have multiple roles?**
+A: No, each user can have only one role at a time. Change their role as needed.
+
+**Q: What if I forget to add a phone number?**
+A: Phone numbers are optional. You can always add them later by editing the user.
+
+**Q: Is there a user limit?**
+A: This depends on your organization's subscription plan. Check with your administrator.
+
+**Q: Can I export the user list?**
+A: This feature is not currently available in the interface. Contact support for data export options.
+
+**Q: Why can't I see the delete button for some users?**
+A: You cannot see action buttons for your own account to prevent self-modification or deletion.
