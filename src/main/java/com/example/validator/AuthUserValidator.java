@@ -31,9 +31,15 @@ public class AuthUserValidator implements BaseValidator {
     public void validateOnCreate(AuthUserCreateDto dto) {
         Optional<AuthUser> optionalRes =
                 repository.findByUsernameAndDeletedFalse(dto.getUsername());
+        WebLang webLang = validateAuthenticationAndGetLanguage();
         if (optionalRes.isPresent()) {
-            throw new UserAlreadyExist(messageSource.getMessage("username.exists",null,utils.getLocaleByLanguage(optionalRes.get().getSettings().getLanguage())));
+            throw new UserAlreadyExist(messageSource.getMessage("username.exists",null,utils.getLocaleByLanguage(webLang)));
         }
+
+        if (repository.checkEmail(dto.getEmail()).isPresent()) {
+            throw new UserAlreadyExist(messageSource.getMessage("username.exists",null,utils.getLocaleByLanguage(webLang)));
+        }
+
         if (dto.getEmail() == null || dto.getEmail().isBlank()) {
             throw new RuntimeException("Email is required");
         }
@@ -90,6 +96,9 @@ public class AuthUserValidator implements BaseValidator {
 
         if(optional.isPresent()) {
             throw new UserAlreadyExist(messageSource.getMessage("username.exists",null,utils.getLocaleByLanguage(lang)));
+        }
+        if (repository.checkEmail(dto.getEmail()).isPresent()) {
+            throw new UserAlreadyExist(messageSource.getMessage("email.exists",null,utils.getLocaleByLanguage(lang)));
         }
 
         if (dto.getEmail() == null || dto.getEmail().isBlank()) {

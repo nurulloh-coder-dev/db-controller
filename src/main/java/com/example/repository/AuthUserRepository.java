@@ -30,6 +30,12 @@ public interface AuthUserRepository extends JpaRepository<AuthUser, String> {
     @Query(value = "update auth_user set db_password =:password where deleted = false and id =:authId",nativeQuery = true)
     void updateDbPassword(@Param("authId") String authId, @Param("password") String password);
 
+    @Query(value = "select 1 from auth_user where email=:email and deleted = false",nativeQuery = true)
+    Optional<Integer> checkEmail(@Param("email") String email);
+
+    @Query(value = "select * from auth_user where email=:email and deleted = false",nativeQuery = true)
+    Optional<AuthUser> findByEmailAndDeletedFalse(@Param("email") String email);
+
 //    @Query(value = "select * from auth_user where deleted = false and (username =:username or email = :email)",nativeQuery = true)
 //    Optional<AuthUser> findByUsernameOrEmail(@Param("username") String username, @Param("email") String email);
 }
