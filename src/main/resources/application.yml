@@ -34,10 +34,13 @@ spring:
       chat:
         model: llama-3.3-70b-versatile
 
+
   data:
     redis:
-      url: ${REDIS_URL}
-
+      host: ${REDISHOST}
+      port: ${REDISPORT}
+      password: ${REDISPASSWORD}
+      username: ${REDISUSER}
 server:
   port: ${PORT:8080}
 
