@@ -80,8 +80,10 @@ public class SecurityConfig {
 
         // 2. Restricted CORS for everything else (your current whitelist)
         CorsConfiguration restrictedConfig = new CorsConfiguration();
+
         restrictedConfig.setAllowedOrigins(Arrays.asList(
-                "http://localhost:9090"
+                "http://localhost:9090",
+                "https://coder12345-web.github.io"
         ));
         restrictedConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         restrictedConfig.setAllowedHeaders(List.of("*"));
