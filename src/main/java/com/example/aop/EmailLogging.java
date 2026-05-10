@@ -38,8 +38,6 @@ public class EmailLogging {
     /**
      * these emails are sent when a user's database activity happens (role change, e.g.)
      */
-
-
     @AfterReturning(
             value = "execution(* com.example.service.EmailService.*(..)) && args(userEmail,text,sendEmail))",
             argNames = "userEmail,text,sendEmail"

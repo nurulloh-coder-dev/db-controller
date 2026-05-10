@@ -17,7 +17,7 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: db.controller.web
+    username: db.controller.web@gmail.com
     password: bghg olts psro rctx
     properties:
       mail:
@@ -47,7 +47,7 @@ app:
   docs-folder: "/app/app-knowledge/"
   base-folder: "/app/Agents/"
   logs-folder: "/app/logs/"
-  user-register: "/app/user-registery"
+  user-register: "/app/user-registery/users.log"
 
 app-security:
   token:
