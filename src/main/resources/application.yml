@@ -16,7 +16,7 @@ spring:
 
   mail:
     host: smtp.gmail.com
-    port: 587
+    port: 465
     username: db.controller.web@gmail.com
     password: bghg olts psro rctx
     properties:
