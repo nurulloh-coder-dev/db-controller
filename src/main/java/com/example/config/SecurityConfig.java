@@ -83,7 +83,7 @@ public class SecurityConfig {
 
         restrictedConfig.setAllowedOrigins(Arrays.asList(
                 "http://localhost:9090",
-                "https://coder12345-web.github.io"
+                "https://db-controller.xyz"
         ));
         restrictedConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         restrictedConfig.setAllowedHeaders(List.of("*"));
