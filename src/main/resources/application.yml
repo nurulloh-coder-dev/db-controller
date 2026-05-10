@@ -26,21 +26,20 @@ spring:
           starttls:
             enable: true
 
-  spring:
-    ai:
-      openai:
-        api-key: ${GROQ_API_KEY}
-        base-url: https://api.groq.com/openai
-      chat:
-        model: llama-3.3-70b-versatile
-
-
   data:
     redis:
-      host: ${REDISHOST}
-      port: ${REDISPORT}
-      password: ${REDISPASSWORD}
-      username: ${REDISUSER}
+      host: ${REDISHOST:localhost}
+      port: ${REDISPORT:6379}
+      password: ${REDISPASSWORD:}
+      username: ${REDISUSER:default}
+
+  ai:
+    openai:
+      api-key: ${SPRING_AI_OPENAI_API_KEY}
+      base-url: https://api.groq.com/openai
+    chat:
+      model: llama-3.3-70b-versatile
+
 server:
   port: ${PORT:8080}
 
