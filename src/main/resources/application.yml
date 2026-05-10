@@ -14,18 +14,6 @@ spring:
   jackson:
     time-zone: Asia/Tashkent
 
-  mail:
-    host: smtp.gmail.com
-    port: 465
-    username: db.controller.web@gmail.com
-    password: bghg olts psro rctx
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-
   data:
     redis:
       host: ${REDISHOST:localhost}
@@ -42,6 +30,10 @@ spring:
 
 server:
   port: ${PORT:8080}
+
+resend:
+  api-key: ${RESEND_API_KEY}
+  from-email: onboarding@resend.dev
 
 app:
   docs-folder: "/app/app-knowledge/"
