@@ -53,5 +53,6 @@ public class EmailService {
         helper.setTo(email);
         helper.setSubject("Password Reset Request");
         helper.setText(htmlBody, true);
+        mailSender.send(message);
     }
 }
