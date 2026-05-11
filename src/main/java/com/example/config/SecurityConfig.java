@@ -83,8 +83,10 @@ public class SecurityConfig {
 
         restrictedConfig.setAllowedOrigins(Arrays.asList(
                 "http://localhost:9090",
-                "https://db-controller.xyz"
+                "https://db-controller.xyz",
+                "http://db-controller.xyz"
         ));
+
         restrictedConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         restrictedConfig.setAllowedHeaders(List.of("*"));
         restrictedConfig.setAllowCredentials(true);  // Safe because origins are specific
