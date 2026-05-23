@@ -25,6 +25,11 @@ spring:
     openai:
       api-key: ${SPRING_AI_OPENAI_API_KEY}
       base-url: https://api.groq.com/openai
+      embedding:
+        api-key: ${OPENAI_API_KEY}
+        base-url: https://api.openai.com
+        options:
+          model: text-embedding-3-small
     chat:
       model: llama-3.3-70b-versatile
 
