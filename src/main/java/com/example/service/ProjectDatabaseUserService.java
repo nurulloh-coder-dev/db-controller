@@ -56,7 +56,7 @@ public class ProjectDatabaseUserService extends AbstractService<
         ProjectDatabase database = databaseUser.getDatabase();
         database.getMembers().add(databaseUser);
         WebSettings settings = databaseUser.getAuthUser().getSettings();
-        applicationEventPublisher.publishEvent(new SendEmailUpdateDBEvent(this, savedMember.getAuthUser().getEmail(), "Hey there %s!\nNow you have access to database %s. Check out more data about it in your profile on Hub.com".formatted(savedMember.getAuthUser().getUsername(), database.getName()), settings.getEnableEmailing()));
+        applicationEventPublisher.publishEvent(new SendEmailUpdateDBEvent(this, savedMember.getAuthUser().getEmail(), "Hey there %s!\nNow you have access to database %s. Check out more data about it in your profile on db-controller.xyz".formatted(savedMember.getAuthUser().getUsername(), database.getName()), settings.getEnableEmailing()));
         projectDatabaseRepository.save(database);
         return mapper.toDto(databaseUser);
     }
@@ -69,7 +69,7 @@ public class ProjectDatabaseUserService extends AbstractService<
         try {
 
             WebSettings settings = projectDatabaseUser.getAuthUser().getSettings();
-            applicationEventPublisher.publishEvent(new SendEmailUpdateDBEvent(this, projectDatabaseUser.getAuthUser().getEmail(), "Hey there %s!\nThere were some changes to your roles on database %s. Check out more data about it in your profile on Hub.com".formatted(projectDatabaseUser.getAuthUser().getUsername(), projectDatabaseUser.getDatabase().getName()), settings.getEnableEmailing()));
+            applicationEventPublisher.publishEvent(new SendEmailUpdateDBEvent(this, projectDatabaseUser.getAuthUser().getEmail(), "Hey there %s!\nThere were some changes to your roles on database %s. Check out more data about it in your profile on db-controller.xyz".formatted(projectDatabaseUser.getAuthUser().getUsername(), projectDatabaseUser.getDatabase().getName()), settings.getEnableEmailing()));
         } catch (RuntimeException e) {
             log.warn("UPDATE: user is not set yet so email sending is not executed!");
         }
@@ -96,7 +96,7 @@ public class ProjectDatabaseUserService extends AbstractService<
         if (authUser!=null) {
             WebSettings settings = authUser.getSettings();
             try {
-                applicationEventPublisher.publishEvent(new SendEmailUpdateDBEvent(this, authUser.getEmail(), "Hey there %s!\nNow you have been restricted to access to database %s. Check out all databases you can access in your profile on Hub.com".formatted(authUser.getUsername(), projectDatabaseUser.getDatabase().getName()), settings.getEnableEmailing()));
+                applicationEventPublisher.publishEvent(new SendEmailUpdateDBEvent(this, authUser.getEmail(), "Hey there %s!\nNow you have been restricted to access to database %s. Check out all databases you can access in your profile on db-controller.xyz".formatted(authUser.getUsername(), projectDatabaseUser.getDatabase().getName()), settings.getEnableEmailing()));
             } catch (RuntimeException e) {
                 log.warn("DELETE: user is not set yet so email sending is not executed!");
             }

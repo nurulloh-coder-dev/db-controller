@@ -49,7 +49,7 @@ public class UserService
     public AuthUserDto create(AuthUserCreateDto dto) {
         validator.validateOnCreate(dto);
         AuthUser authUser = mapper.fromDto(dto);
-        publisher.publishEvent(new SendEmailToAuthUser(this, authUser.getEmail(), "Hey there!\nYou have been successfully registered to Hub!🤗🤗🤗\nHere are details for login: username =  %s and password = %s for login. DO NOT SHARE IT WITH ANYONE!!!".formatted(authUser.getUsername(), authUser.getPassword()), "Welcome to Hub.com"));
+        publisher.publishEvent(new SendEmailToAuthUser(this, authUser.getEmail(), "Hey there!\nYou have been successfully registered to DB-controller!🤗🤗🤗\nHere are details for login: username =  %s and password = %s for login. DO NOT SHARE IT WITH ANYONE!!!".formatted(authUser.getUsername(), authUser.getPassword()), "Welcome to DB-controller.com"));
         authUser.setPassword(passwordEncoder.encode(authUser.getPassword()));
         return mapper.toDto(repository.save(authUser));
     }
@@ -133,7 +133,7 @@ public class UserService
     public AuthUserDto createWithOrganization(AuthUserCreateWithOrganization dto, String lang) {
         validator.validateOnCreateWithOrganization(dto,lang);
         AuthUser user = mapper.toEntityFromCreateAuthUserWithOrganization(dto,lang);
-        publisher.publishEvent(new SendEmailToAuthUser(this, user.getEmail(), "Hey there!\nYou have been successfully registered to Hub!🤗🤗🤗\nHere are details for login: username = %s and password = %s for login. DO NOT SHARE IT WITH ANYONE!!!".formatted(user.getUsername(), user.getPassword()), "Welcome to Hub.com"));
+        publisher.publishEvent(new SendEmailToAuthUser(this, user.getEmail(), "Hey there!\nYou have been successfully registered to DB-controller!🤗🤗🤗\nHere are details for login: username = %s and password = %s for login. DO NOT SHARE IT WITH ANYONE!!!".formatted(user.getUsername(), user.getPassword()), "Welcome to DB-controller.com"));
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return mapper.toDto(repository.save(user));
     }
