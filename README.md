@@ -7,6 +7,11 @@ This is the core engine of the DB-Controller application. It handles API request
 * **Type-Safe Foundation:** Programmed entirely in **Java** to leverage its strict syntax, strong type-safety, and robust memory management.
 * **Decoupled Execution (DB-Agent):** To maximize security, the backend does not execute SQL queries directly. Instead, it processes requests and delegates execution to a secondary microservice/module, **DB-Agent**. This separation isolates the database connection and mitigates risks such as direct SQL Injection (SQLi) vulnerabilities.
 
+## 🤖 Intelligent Features & Services
+* **AI-Powered Chat Assistant:** Integrated an interactive AI chat using **Spring AI**, allowing users to communicate naturally and receive context-aware responses directly within the ecosystem.
+* **Automated Notification System (EOP):** Features an automated Email Outbound Processing (EOP) engine to handle system alerts, user updates, and transactional communications efficiently.
+* **Artifact & File Management:** Includes a secure file distribution system enabling users to download necessary runtime components, such as the compiled `agent.jar` executable.
+
 ## 🔒 Security & Data Management
 * **Role-Based Access Control (RBAC):** Integrated **Spring Security** to enforce strict user roles and permissions. Unauthorized API calls are restricted, ensuring users can only access endpoints matching their explicitly granted privileges.
 * **Data Layer & Optimization:** Utilizes **Spring Boot** for core framework architecture, **PostgreSQL** for reliable relational data storage, and **Redis** as a high-performance caching layer to optimize data flow and system responsiveness.
