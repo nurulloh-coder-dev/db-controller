@@ -25,6 +25,7 @@ import com.example.repository.ProjectDatabaseUserRepository;
 import com.example.validator.ProjectDatabaseUserValidator;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -58,10 +59,12 @@ public class ProjectDatabaseUserService extends AbstractService<
     public ProjectDatabaseUserDto create(ProjectDatabaseUserCreateDto createDto) {
         checkCreateAccess(createDto);
         validator.validateOnCreate(createDto);
-        var databaseUser = mapper.mapToEntityOnCreate(createDto);
+        var databaseUser = reuseImportedLogin(createDto).orElseGet(() -> mapper.mapToEntityOnCreate(createDto));
         ProjectDatabaseUser savedMember = repository.save(databaseUser);
         ProjectDatabase database = databaseUser.getDatabase();
-        database.getMembers().add(databaseUser);
+        if (!database.getMembers().contains(databaseUser)) {
+            database.getMembers().add(databaseUser);
+        }
         WebSettings settings = databaseUser.getAuthUser().getSettings();
         applicationEventPublisher.publishEvent(new SendEmailUpdateDBEvent(this, savedMember.getAuthUser().getEmail(), "Hey there %s!\nNow you have access to database %s. Check out more data about it in your profile on db-controller.xyz".formatted(savedMember.getAuthUser().getUsername(), database.getName()), settings.getEnableEmailing()));
         projectDatabaseRepository.save(database);
@@ -201,6 +204,29 @@ public class ProjectDatabaseUserService extends AbstractService<
             repository.save(projectDatabaseUser);
         }
         projectDatabaseRepository.saveAll(databases);
+    }
+
+    /**
+     * The agent imports logins that already exist in the database as members without an account.
+     * Adding that person attaches them to that row instead of creating a second member with the
+     * same login (which made every later agent sync fail).
+     */
+    private Optional<ProjectDatabaseUser> reuseImportedLogin(ProjectDatabaseUserCreateDto createDto) {
+        AuthUser authUser = authUserValidator.validateIdAndGet(createDto.getAuthUserId());
+        if (authUser.getDbUsername() == null) {
+            return Optional.empty();
+        }
+        List<ProjectDatabaseUser> sameLogin = repository.findAllByUsernameAndDatabaseId(authUser.getDbUsername(), createDto.getDatabaseId());
+        Optional<ProjectDatabaseUser> imported = sameLogin.stream().filter(m -> m.getAuthUser() == null).findFirst();
+        imported.ifPresent(member -> {
+            projectDatabaseValidator.checkIfMemberAlreadyExists(member.getDatabase(), authUser.getId());
+            member.setAuthUser(authUser);
+            member.setRoles(databaseRoleRepository.findAllByIdIn(createDto.getRoles()).stream()
+                    .filter(r -> createDto.getDatabaseId().equals(r.getDatabaseId()))
+                    .toList());
+            member.setVersion(versionProviderService.getMaxVersionAndIncrement(member.getDatabase()));
+        });
+        return imported;
     }
 
     private ProjectDatabaseUser checkMember(ProjectDatabaseUser member) {

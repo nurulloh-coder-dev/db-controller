@@ -70,12 +70,11 @@ public class DatabaseRoleService extends AbstractService<DatabaseRoleRepository,
 
     public void syncUserRoles(List<DatabaseUserRegistry> dto,String databaseId) {
         for (DatabaseUserRegistry user : dto) {
-            Optional<ProjectDatabaseUser> optional = projectDatabaseUserRepository.findByUsernameAndDatabaseId(user.getUsername(),databaseId);
-            if (optional.isEmpty())continue;
-            ProjectDatabaseUser projectDatabaseUser = optional.get();
-            List<String> roles = user.getRoles();
-            projectDatabaseUser.setRoles(repository.getAllByName(databaseId,roles));
-            projectDatabaseUserRepository.save(projectDatabaseUser);
+            // normally one row per login; older data can hold duplicates, so update them all
+            for (ProjectDatabaseUser projectDatabaseUser : projectDatabaseUserRepository.findAllByUsernameAndDatabaseId(user.getUsername(), databaseId)) {
+                projectDatabaseUser.setRoles(repository.getAllByName(databaseId, user.getRoles()));
+                projectDatabaseUserRepository.save(projectDatabaseUser);
+            }
         }
     }
 
