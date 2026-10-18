@@ -16,6 +16,7 @@ import com.example.repository.AuthRoleRepository;
 import com.example.repository.AuthUserRepository;
 import com.example.repository.WebSettingsRepository;
 import com.example.service.PasswordGenerator;
+import com.example.validator.AccessValidator;
 import com.example.validator.AuthRoleValidator;
 import com.example.validator.AuthUserValidator;
 import com.example.validator.OrganizationValidator;
@@ -37,6 +38,7 @@ public class AuthUserMapper implements BaseMapper {
     private final AuthRoleRepository authRoleRepository;
     private final OrganizationMapper organizationMapper;
     private final ProjectDatabaseValidator projectDatabaseValidator;
+    private final AccessValidator accessValidator;
 
     public AuthUser fromDto(AuthUserCreateDto dto) {
         AuthRole role = authRoleValidator.existsAndGet(dto.getRoleId());
@@ -123,7 +125,7 @@ public class AuthUserMapper implements BaseMapper {
     }
 
     public List<AuthUser> findAllByNameLike(String search, String dbId) {
-        List<AuthUser> list = projectDatabaseValidator.validateId(dbId).getMembers().stream().map(ProjectDatabaseUser::getAuthUser).toList();
+        List<AuthUser> list = accessValidator.checkDatabase(projectDatabaseValidator.validateId(dbId)).getMembers().stream().map(ProjectDatabaseUser::getAuthUser).toList();
         List<AuthUser> allBySearch = authUserRepository.findAllBySearch(search, authUserValidator.validateAuthenticationAndGetId());
         return allBySearch
                 .stream()

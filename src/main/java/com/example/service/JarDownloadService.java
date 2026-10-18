@@ -23,11 +23,16 @@ public class JarDownloadService {
     private final AuthUserValidator authUserValidator;
 
     public Optional<Resource> download(String name) {
+        // plain file names only, and the result must stay inside the agents folder
+        if (name == null || !name.matches("[A-Za-z0-9._-]+") || name.contains("..")) {
+            return Optional.empty();
+        }
         if (!name.startsWith("db-agent")) {
             name = ("db-agent-" +name);
         }
-        Path jarPath = Paths.get(fileService.getDBAgent(name));
-        if (!jarPath.toFile().exists()) {
+        Path agentsDir = Paths.get(fileService.getDBAgent("")).toAbsolutePath().normalize();
+        Path jarPath = Paths.get(fileService.getDBAgent(name)).toAbsolutePath().normalize();
+        if (!jarPath.startsWith(agentsDir) || !jarPath.toFile().isFile()) {
             return Optional.empty();
         }
         Resource resource = new FileSystemResource(jarPath);

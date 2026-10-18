@@ -34,11 +34,13 @@ public class ProjectDatabaseController {
         return new ResponseEntity<>(service.get(id), HttpStatus.OK);
     }
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProjectDatabaseDto> update(@RequestBody ProjectDatabaseUpdateDto updateDto, @PathVariable("id") String id) {
         return new ResponseEntity<>(service.update(id,updateDto), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public void delete(@PathVariable String id) {
         service.delete(id);
     }

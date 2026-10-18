@@ -3,6 +3,7 @@ package com.example.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import com.example.model.dto.jar.AdminJarVersionDto;
 import com.example.model.dto.jar.JarVersionDto;
@@ -25,6 +26,7 @@ public class JarVersionController {
     }
 
     @GetMapping("/admin")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<AdminJarVersionDto> getAllForAdmin() {
         AdminJarVersionDto all = jarVersionService.getAllForAdmin();
         return ResponseEntity.ok(all);
@@ -37,18 +39,21 @@ public class JarVersionController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<JarVersionDto> create(@RequestBody JarVersionCreateDto jarVersionCreateDto) {
         JarVersionDto jarVersionDto = jarVersionService.create(jarVersionCreateDto);
         return new ResponseEntity<>(jarVersionDto, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<JarVersionDto> update(@PathVariable String id, @RequestBody JarVersionUpdateDto jarVersionUpdateDto) {
         JarVersionDto jarVersionDto = jarVersionService.update(id,jarVersionUpdateDto);
         return new ResponseEntity<>(jarVersionDto, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable String id ) {
         jarVersionService.delete(id);
         return ResponseEntity.noContent().build();

@@ -2,6 +2,7 @@ package com.example.controller;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import com.example.aop.SkipActivityTracking;
 import com.example.model.dto.agent.ProjectAgentCreateDTO;
@@ -15,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @RequestMapping("/api/v1/project-agent")
 @SkipActivityTracking
+@PreAuthorize("hasRole('ADMIN')")
 public class ProjectAgentController {
     private final ProjectAgentService service;
 

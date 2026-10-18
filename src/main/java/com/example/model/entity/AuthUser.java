@@ -1,5 +1,6 @@
 package com.example.model.entity;
 
+import java.time.Instant;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,4 +32,7 @@ public class AuthUser extends BaseEntity {
 
     @OneToOne
     private WebSettings settings;
+
+    // tokens issued before this moment are rejected (password change/reset signs out other sessions)
+    private Instant passwordChangedAt;
 }

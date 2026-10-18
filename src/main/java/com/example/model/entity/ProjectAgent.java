@@ -19,4 +19,6 @@ public class ProjectAgent extends BaseEntity {
     private String databasePassword;
     private String databaseUrl;
     private String organizationId;
+    // SHA-256 of the key issued to the agent; once set, every agent call must present the key
+    private String agentKeyHash;
 }

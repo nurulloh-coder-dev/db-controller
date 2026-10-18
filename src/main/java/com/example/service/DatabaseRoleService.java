@@ -5,6 +5,8 @@ import com.example.model.dto.special.DatabaseUserRegistry;
 import com.example.model.entity.ProjectDatabaseUser;
 import com.example.repository.ProjectDatabaseUserRepository;
 import org.springframework.stereotype.Service;
+import com.example.validator.AccessValidator;
+import com.example.validator.ProjectDatabaseValidator;
 import com.example.mapper.DatabaseRoleMapper;
 import com.example.model.dto.databaseRole.DatabaseRoleCreateDTO;
 import com.example.model.dto.databaseRole.DatabaseRoleDTO;
@@ -20,10 +22,14 @@ import java.util.Optional;
 public class DatabaseRoleService extends AbstractService<DatabaseRoleRepository, DatabaseRoleMapper, DatabaseRoleValidator>
         implements CRUDService<DatabaseRoleDTO, DatabaseRoleCreateDTO, DatabaseRoleDTO, String> {
     private final ProjectDatabaseUserRepository projectDatabaseUserRepository;
+    private final ProjectDatabaseValidator projectDatabaseValidator;
+    private final AccessValidator accessValidator;
 
-    public DatabaseRoleService(DatabaseRoleRepository repository, DatabaseRoleMapper mapper, DatabaseRoleValidator validator, ProjectDatabaseUserRepository projectDatabaseUserRepository) {
+    public DatabaseRoleService(DatabaseRoleRepository repository, DatabaseRoleMapper mapper, DatabaseRoleValidator validator, ProjectDatabaseUserRepository projectDatabaseUserRepository, ProjectDatabaseValidator projectDatabaseValidator, AccessValidator accessValidator) {
         super(repository, mapper, validator);
         this.projectDatabaseUserRepository = projectDatabaseUserRepository;
+        this.projectDatabaseValidator = projectDatabaseValidator;
+        this.accessValidator = accessValidator;
     }
 
     @Override
@@ -33,7 +39,7 @@ public class DatabaseRoleService extends AbstractService<DatabaseRoleRepository,
 
     @Override
     public DatabaseRoleDTO update(String id, DatabaseRoleDTO dto) {
-        DatabaseRole databaseRole = repository.findById(id).orElseThrow(() -> new NoSuchElementException("Database role with id " + id + " not found"));
+        DatabaseRole databaseRole = checkRole(repository.findById(id).orElseThrow(() -> new NoSuchElementException("Database role with id " + id + " not found")));
         databaseRole.setName(dto.getName());
         databaseRole.setDescription(dto.getDescription());
         databaseRole.setCode(dto.getCode());
@@ -42,7 +48,7 @@ public class DatabaseRoleService extends AbstractService<DatabaseRoleRepository,
 
     @Override
     public DatabaseRoleDTO get(String id) {
-        return repository.findById(id).map(mapper::toDto).orElseThrow(() -> new NoSuchElementException("Database role with id " + id + " not found."));
+        return repository.findById(id).map(this::checkRole).map(mapper::toDto).orElseThrow(() -> new NoSuchElementException("Database role with id " + id + " not found."));
     }
 
     @Override
@@ -52,23 +58,31 @@ public class DatabaseRoleService extends AbstractService<DatabaseRoleRepository,
 
     @Override
     public void delete(String id) {
-        DatabaseRole databaseRole = repository.findById(id).orElseThrow(() -> new NoSuchElementException("Database role with id " + id + " not found."));
+        DatabaseRole databaseRole = checkRole(repository.findById(id).orElseThrow(() -> new NoSuchElementException("Database role with id " + id + " not found.")));
         databaseRole.setDeleted(true);
         repository.save(databaseRole);
     }
 
     public List<DatabaseRoleDTO> getAllByDBId(String id) {
+        accessValidator.checkDatabase(projectDatabaseValidator.validateId(id));
         return mapper.toListDto(repository.findAllByDatabaseId(id));
     }
 
     public void syncUserRoles(List<DatabaseUserRegistry> dto,String databaseId) {
         for (DatabaseUserRegistry user : dto) {
-            Optional<ProjectDatabaseUser> optional = projectDatabaseUserRepository.findByUsernameAndDatabaseId(user.getUsername(),databaseId);
-            if (optional.isEmpty())continue;
-            ProjectDatabaseUser projectDatabaseUser = optional.get();
-            List<String> roles = user.getRoles();
-            projectDatabaseUser.setRoles(repository.getAllByName(databaseId,roles));
-            projectDatabaseUserRepository.save(projectDatabaseUser);
+            // normally one row per login; older data can hold duplicates, so update them all
+            for (ProjectDatabaseUser projectDatabaseUser : projectDatabaseUserRepository.findAllByUsernameAndDatabaseId(user.getUsername(), databaseId)) {
+                projectDatabaseUser.setRoles(repository.getAllByName(databaseId, user.getRoles()));
+                projectDatabaseUserRepository.save(projectDatabaseUser);
+            }
         }
+    }
+
+    private DatabaseRole checkRole(DatabaseRole role) {
+        if (role.getDatabaseId() == null) {
+            throw new NoSuchElementException("Database role with id " + role.getId() + " not found.");
+        }
+        accessValidator.checkDatabase(projectDatabaseValidator.validateId(role.getDatabaseId()));
+        return role;
     }
 }

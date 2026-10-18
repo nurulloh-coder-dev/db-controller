@@ -50,13 +50,13 @@ public class EmailService {
 
     @Async
     @SneakyThrows
-    public void sendResetLink(String email, String rawToken) {
+    public void sendResetLink(String email, String link) {
         String htmlBody = """
                 <p>Click the link below to reset your password:</p>
-                <a href="https://coder12345-web.github.io/db-controller-front/login/reset-password.html?token=%s">Reset Password</a>
+                <a href="%s">Reset Password</a>
                 <p>This link expires in 15 minutes.</p>
                 <p>If you did not request this, ignore this email.</p>
-                """.formatted(rawToken);
+                """.formatted(link);
 
         CreateEmailOptions params = CreateEmailOptions.builder()
                 .from(fromEmail)

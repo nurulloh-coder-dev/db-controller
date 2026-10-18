@@ -69,14 +69,16 @@ public class ProjectDatabaseUserController {
 
 
     @PostMapping("/{dbUserId}/attach/{authId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> attachUser(@PathVariable String dbUserId, @PathVariable String authId) {
         service.attachUser(dbUserId, authId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/{dbUserId}/unattach/{authId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> unattachUser(@PathVariable String dbUserId, @PathVariable String authId) {
-        service.attachUser(dbUserId, authId);
+        service.unattachUser(dbUserId, authId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

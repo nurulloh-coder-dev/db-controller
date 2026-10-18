@@ -1,9 +1,10 @@
 package com.example.service;
 
+import com.example.exception.InvalidInput;
 import com.example.util.Utils;
 import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -19,18 +20,18 @@ import com.example.model.dto.auth.LoginResponse;
 import com.example.model.dto.auth.TokenDto;
 import com.example.repository.AuthUserRepository;
 
-import java.security.MessageDigest;
-import java.nio.charset.StandardCharsets;
-
+import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @AllArgsConstructor
 @Service
 public class AuthService {
+    private static final String REVOKED_PREFIX = "revoked-refresh:";
+    static final int MIN_PASSWORD_LENGTH = 8;
+
     private final RedisTemplate<String, String> redis;
     private final PasswordEncoder passwordEncoder;
     private final AuthUserRepository repository;
@@ -41,21 +42,22 @@ public class AuthService {
     private final MessageSource messageSource;
     private final Utils utils;
     private final EmailService emailService;
+    private final PasswordTokenService passwordTokenService;
+    private final LoginAttemptService loginAttemptService;
 
 
     public LoginResponse login(String username, String password, String lang) {
-
-        AuthUser authUser = authUserRepository.findByUsernameAndDeletedFalse(username).orElseThrow(
-                () -> new BadCredentialsException(messageSource.getMessage("username.password.error", null, utils.getLocaleByLanguage(lang)))
-        );
-
-        if (!passwordEncoder.matches(password, authUser.getPassword())) {
-            throw new BadCredentialsException(messageSource.getMessage("username.password.error", null, utils.getLocaleByLanguage(lang)));
+        if (loginAttemptService.isLocked(username)) {
+            throw new BadCredentialsException("Too many failed attempts. Try again in 15 minutes.");
         }
 
-        Map<String, Object> stringObjectMap = jwtUtils.prepareClaims(authUser);
-        TokenDto accessToken = jwtUtils.generateAccessToken(username, stringObjectMap);
-        TokenDto refreshToken = jwtUtils.generateRefreshToken(username, null);
+        AuthUser authUser = authUserRepository.findByUsernameAndDeletedFalse(username).orElse(null);
+        if (authUser == null || !passwordEncoder.matches(password, authUser.getPassword())) {
+            loginAttemptService.recordFailure(username);
+            throw new BadCredentialsException(messageSource.getMessage("username.password.error", null, utils.getLocaleByLanguage(lang)));
+        }
+        loginAttemptService.recordSuccess(username);
+
         if (userSessionService.isRedisRunning()) {
             UserSession userSession = new UserSession();
             userSession.setUserId(authUser.getId());
@@ -64,12 +66,7 @@ public class AuthService {
             userSessionRepository.save(userSession);
             userSessionService.markActive(authUser.getId());
         }
-        return LoginResponse.builder()
-                .token(accessToken.getToken())
-                .expiry(accessToken.getExpiry())
-                .refreshToken(refreshToken.getToken())
-                .refreshExpiry(refreshToken.getRefreshExpiry())
-                .build();
+        return issueTokens(authUser);
     }
 
     public List<AuthUserDto> getAll() {
@@ -81,14 +78,73 @@ public class AuthService {
                 .build()).toList();
     }
 
+    /**
+     * Exchanges a refresh token for a new token pair. Refresh tokens are single use: the old one is
+     * revoked, so a stolen copy stops working as soon as either party uses it.
+     */
     public LoginResponse refreshToken(String refreshToken) {
-        Claims claims = jwtUtils.extractClaims(refreshToken);
-        String username = claims.getSubject();
-        AuthUser authUser = authUserRepository.findByUsernameAndDeletedFalse(username).orElseThrow(
+        Claims claims = parseRefreshToken(refreshToken);
+        if (isRevoked(claims)) {
+            throw new BadCredentialsException("Invalid refresh token");
+        }
+        AuthUser authUser = authUserRepository.findByUsernameAndDeletedFalse(claims.getSubject()).orElseThrow(
                 () -> new BadCredentialsException("Invalid refresh token")
         );
-        TokenDto access = jwtUtils.generateAccessToken(username, jwtUtils.prepareClaims(authUser));
-        TokenDto refresh = jwtUtils.generateRefreshToken(username, null);
+        if (jwtUtils.issuedBeforePasswordChange(claims, authUser)) {
+            throw new BadCredentialsException("Invalid refresh token");
+        }
+        revoke(claims);
+        return issueTokens(authUser);
+    }
+
+    /** Revokes the given refresh token; the short-lived access token simply expires. */
+    public void logout(String refreshToken) {
+        try {
+            revoke(parseRefreshToken(refreshToken));
+        } catch (Exception e) {
+            // already invalid: nothing to revoke
+        }
+    }
+
+    public String forgotPassword(String email, String lang) {
+        String msg = messageSource.getMessage("password.link", null, utils.getLocaleByLanguage(lang));
+        if (email == null || repository.checkEmail(email).isEmpty()) {
+            return msg; // same answer either way, so emails can't be probed
+        }
+        emailService.sendResetLink(email, passwordTokenService.createLink(email, Duration.ofMinutes(15)));
+        return msg;
+    }
+
+    public String resetPassword(String rawToken, String newPassword, String lang) {
+        checkNewPassword(newPassword);
+        String email = passwordTokenService.consume(rawToken)
+                .orElseThrow(() -> new InvalidInput("Invalid or expired link"));
+
+        AuthUser user = repository.findByEmailAndDeletedFalse(email)
+                .orElseThrow(() -> new InvalidInput("Invalid or expired link"));
+
+        setPassword(user, newPassword);
+        return messageSource.getMessage("password.reset.success", null, utils.getLocaleByLanguage(lang));
+    }
+
+    /** Sets a new login password and signs out every session issued before it. */
+    public void setPassword(AuthUser user, String newPassword) {
+        checkNewPassword(newPassword);
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setPasswordChangedAt(Instant.now());
+        repository.save(user);
+    }
+
+    static void checkNewPassword(String newPassword) {
+        if (newPassword == null || newPassword.length() < MIN_PASSWORD_LENGTH) {
+            throw new InvalidInput("Password must be at least " + MIN_PASSWORD_LENGTH + " characters");
+        }
+    }
+
+    private LoginResponse issueTokens(AuthUser authUser) {
+        Map<String, Object> claims = jwtUtils.prepareClaims(authUser);
+        TokenDto access = jwtUtils.generateAccessToken(authUser.getUsername(), claims);
+        TokenDto refresh = jwtUtils.generateRefreshToken(authUser.getUsername(), null);
         return LoginResponse.builder()
                 .token(access.getToken())
                 .expiry(access.getExpiry())
@@ -97,50 +153,40 @@ public class AuthService {
                 .build();
     }
 
-
-    public String forgotPassword(String email, String lang) {
-        String msg = messageSource.getMessage("password.link", null, utils.getLocaleByLanguage(lang));
-
-        boolean present = repository.checkEmail(email).isPresent();
-        if (!present) {
-            return msg;
+    private Claims parseRefreshToken(String refreshToken) {
+        if (refreshToken == null || refreshToken.isBlank()) {
+            throw new BadCredentialsException("Invalid refresh token");
         }
-
-        String rawToken = UUID.randomUUID().toString();
-        String tokenHash = hashToken(rawToken);
-        emailService.sendResetLink(email, rawToken);
-        redis.opsForValue().set(tokenHash, email, 15, TimeUnit.MINUTES);
-        return msg;
-    }
-    public String resetPassword(String rawToken, String newPassword, String lang) {
-        String tokenHash = hashToken(rawToken);
-
-        String email = redis.opsForValue().get(tokenHash);
-        if (email == null) {
-            throw new RuntimeException("Invalid or expired token");
+        Claims claims;
+        try {
+            claims = jwtUtils.extractClaims(refreshToken);
+        } catch (Exception e) {
+            throw new BadCredentialsException("Invalid refresh token");
         }
-
-        AuthUser user = repository.findByEmailAndDeletedFalse(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        user.setPassword(passwordEncoder.encode(newPassword));
-        repository.save(user);
-
-        redis.delete(tokenHash); // one time use, delete after reset
-
-        return messageSource.getMessage("password.reset.success", null, utils.getLocaleByLanguage(lang));
+        if (!jwtUtils.isType(claims, JwtUtils.REFRESH) || claims.getId() == null) {
+            throw new BadCredentialsException("Invalid refresh token");
+        }
+        return claims;
     }
 
-    @SneakyThrows
-    private String hashToken(String rawToken) {
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        byte[] hash = digest.digest(rawToken.getBytes(StandardCharsets.UTF_8));
-
-        // convert bytes to hex string
-        StringBuilder hex = new StringBuilder();
-        for (byte b : hash) {
-            hex.append(String.format("%02x", b));
+    private boolean isRevoked(Claims claims) {
+        try {
+            return Boolean.TRUE.equals(redis.hasKey(REVOKED_PREFIX + claims.getId()));
+        } catch (Exception e) {
+            log.warn("Redis unavailable, refresh token revocation not checked: {}", e.getMessage());
+            return false;
         }
-        return hex.toString();
+    }
+
+    private void revoke(Claims claims) {
+        Duration remaining = Duration.between(Instant.now(), claims.getExpiration().toInstant());
+        if (remaining.isNegative() || remaining.isZero()) {
+            return;
+        }
+        try {
+            redis.opsForValue().set(REVOKED_PREFIX + claims.getId(), "1", remaining);
+        } catch (Exception e) {
+            log.warn("Redis unavailable, refresh token not revoked: {}", e.getMessage());
+        }
     }
 }

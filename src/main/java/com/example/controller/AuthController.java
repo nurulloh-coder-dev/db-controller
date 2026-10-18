@@ -21,13 +21,8 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request, @RequestParam(defaultValue = "en") String lang) {
-        try {
-            LoginResponse response = service.login(request.getUsername(), request.getPassword(),lang);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
+        LoginResponse response = service.login(request.getUsername(), request.getPassword(), lang);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("/forgot-password")
@@ -48,9 +43,21 @@ public class AuthController {
         return ResponseEntity.ok(message);
     }
 
+    /**
+     * The refresh token belongs in the body; the query parameter is still read so pages loaded
+     * before this release keep working, but URLs end up in logs, so it should go away.
+     */
     @PostMapping("/refresh-token")
-    public ResponseEntity<LoginResponse> refreshToken(@RequestParam String refreshToken) {
-        LoginResponse response = service.refreshToken(refreshToken);
+    public ResponseEntity<LoginResponse> refreshToken(@RequestBody(required = false) Map<String, String> body,
+                                                      @RequestParam(required = false) String refreshToken) {
+        String token = body != null && body.get("refreshToken") != null ? body.get("refreshToken") : refreshToken;
+        LoginResponse response = service.refreshToken(token);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(@RequestBody(required = false) Map<String, String> body) {
+        service.logout(body == null ? null : body.get("refreshToken"));
+        return ResponseEntity.noContent().build();
     }
 }

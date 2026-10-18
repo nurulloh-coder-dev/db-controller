@@ -5,7 +5,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,12 +17,26 @@ import com.example.model.entity.AuthUser;
 import com.example.repository.AuthUserRepository;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
-@RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
     private final JwtUtils jwtUtils;
     private final AuthUserRepository authUserRepository;
+    private final Set<String> superAdminUsernames;
+
+    public JwtFilter(JwtUtils jwtUtils,
+                     AuthUserRepository authUserRepository,
+                     @Value("${app-security.super-admins:}") String superAdmins) {
+        this.jwtUtils = jwtUtils;
+        this.authUserRepository = authUserRepository;
+        this.superAdminUsernames = Arrays.stream(superAdmins.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.toUnmodifiableSet());
+    }
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
@@ -40,7 +54,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
             try {
                 Claims claims = jwtUtils.extractClaims(token);
-                if (jwtUtils.isTokenValid(token, claims)) {
+                // refresh tokens are only good for /auth/refresh-token, never for API calls
+                if (jwtUtils.isTokenValid(token, claims) && jwtUtils.isType(claims, JwtUtils.ACCESS)) {
                     CustomUserDetails userDetails = prepareUserDetails(claims);
 
                     Authentication auth = new UsernamePasswordAuthenticationToken(
@@ -60,6 +75,9 @@ public class JwtFilter extends OncePerRequestFilter {
 
         AuthUser authUser = authUserRepository.findByUsernameAndDeletedFalse(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
+        if (jwtUtils.issuedBeforePasswordChange(claims, authUser)) {
+            throw new UsernameNotFoundException("token issued before password change");
+        }
         String userId = authUser.getId();
 
         return CustomUserDetails.builder()
@@ -68,6 +86,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 .username(username)
                 .role(authUser.getRole().getName())
                 .organizationId(authUser.getOrganization().getId())
+                .superAdmin(superAdminUsernames.contains(username))
                 .build();
     }
 }

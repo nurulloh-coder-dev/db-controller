@@ -21,6 +21,9 @@ public interface AuthUserRepository extends JpaRepository<AuthUser, String> {
     @Query(value = "select * from auth_user where deleted = false and organization_id = :organizationId",nativeQuery = true)
     List<AuthUser> findAllByOrganization(@Param("organizationId") String orgId);
 
+    @Query(value = "select count(*) from auth_user where organization_id = :organizationId",nativeQuery = true)
+    long countAllByOrganizationId(@Param("organizationId") String organizationId);
+
     @Query(value = "select true from auth_user where id =:id and deleted = false",nativeQuery = true)
     Boolean checkIfExists(@Param("id") String id);
 

@@ -2,6 +2,7 @@ package com.example.controller.active_users;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +17,7 @@ public class UserSessionController {
     private final UserSessionService userSessionService;
 
     @GetMapping("/{date}")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<ActiveUsersResponse> getAllActiveUsersByDate(
             @PathVariable("date")String date) {
         ActiveUsersResponse activeUsers = userSessionService.getActiveUsers(date);

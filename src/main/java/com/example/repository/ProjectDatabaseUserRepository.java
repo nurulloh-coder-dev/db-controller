@@ -55,5 +55,5 @@ public interface ProjectDatabaseUserRepository extends JpaRepository<ProjectData
     void removeMembers(@Param("dbId")String id, @Param("members") List<String> removedUsers);
 
     @Query(value = "select * from project_database_user where database_id = :dbId and username= :username and deleted = false",nativeQuery = true)
-    Optional<ProjectDatabaseUser> findByUsernameAndDatabaseId(@Param("username") String username, @Param("dbId") String databaseId);
+    List<ProjectDatabaseUser> findAllByUsernameAndDatabaseId(@Param("username") String username, @Param("dbId") String databaseId);
 }

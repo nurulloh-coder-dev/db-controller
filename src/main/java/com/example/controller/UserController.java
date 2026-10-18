@@ -1,7 +1,6 @@
 package com.example.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +15,7 @@ import com.example.model.entity.WebSettings;
 import com.example.service.UserService;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -101,14 +101,16 @@ public class UserController {
         return  ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/password")
-    public ResponseEntity<Boolean> checkPassword(@PathParam("password") String password){
-        Boolean resp = service.handlePasswordCheck(password);
+    // passwords go in the request body, never in the URL (URLs end up in logs and browser history)
+    @PostMapping("/password/check")
+    public ResponseEntity<Boolean> checkPassword(@RequestBody Map<String, String> body){
+        Boolean resp = service.handlePasswordCheck(body.get("password"));
         return ResponseEntity.ok(resp);
     }
+
     @PostMapping("/password")
-    public ResponseEntity<Void> savePassword(@PathParam("password") String password){
-        service.handlePasswordUpdate(password);
+    public ResponseEntity<Void> savePassword(@RequestBody Map<String, String> body){
+        service.handlePasswordUpdate(body.get("currentPassword"), body.get("newPassword"));
         return ResponseEntity.noContent().build();
     }
 }
