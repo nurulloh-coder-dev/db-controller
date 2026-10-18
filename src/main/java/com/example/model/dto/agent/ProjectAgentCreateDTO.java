@@ -19,4 +19,5 @@ public class ProjectAgentCreateDTO {
     private String databaseUrl;
     private String organizationId;
     private Integer version;
+    private boolean supportsAgentKey;
 }

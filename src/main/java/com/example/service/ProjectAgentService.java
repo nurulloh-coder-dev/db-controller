@@ -16,10 +16,16 @@ import com.example.model.entity.ProjectDatabase;
 import com.example.repository.ProjectAgentRepository;
 import com.example.validator.AccessValidator;
 import com.example.validator.ProjectAgentValidator;
+import lombok.SneakyThrows;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.SecureRandom;
+import java.util.Base64;
+import java.util.HexFormat;
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -34,6 +40,7 @@ public class ProjectAgentService extends AbstractService<ProjectAgentRepository,
     private final DatabaseRoleService databaseRoleService;
     private final AccessValidator accessValidator;
     private final PasswordEncoder passwordEncoder;
+    private static final SecureRandom RANDOM = new SecureRandom();
 
     public ProjectAgentService(ProjectAgentRepository repository, ProjectAgentMapper mapper, ProjectAgentValidator validator, ProjectDatabaseService projectDatabaseService, ProjectDatabaseUserService projectDatabaseUserService, DatabaseRoleService databaseRoleService, AccessValidator accessValidator, PasswordEncoder passwordEncoder) {
         super(repository, mapper, validator);
@@ -104,7 +111,9 @@ public class ProjectAgentService extends AbstractService<ProjectAgentRepository,
             ProjectAgent projectAgent = byId.get();
             // only an agent that knows the database password may take over an existing registration
             verifyAgentPassword(projectAgent, dto.getDatabasePassword());
-            return new ProjectAgentDTO(projectAgent.getId(), projectAgent.getName(), projectAgent.getDatabaseUsername(), projectAgent.getDatabaseUrl(), dto.getVersion());
+            ProjectAgentDTO existing = new ProjectAgentDTO(projectAgent.getId(), projectAgent.getName(), projectAgent.getDatabaseUsername(), projectAgent.getDatabaseUrl(), dto.getVersion(), null);
+            issueAgentKey(projectAgent, existing, dto);
+            return existing;
         }
         Organization organization = validator.validateOrganizationId(dto.getOrganizationId());
         ProjectAgentDTO projectAgentDTO = save(dto);
@@ -115,6 +124,7 @@ public class ProjectAgentService extends AbstractService<ProjectAgentRepository,
                 .membersId(Collections.emptyList())
                 .version(dto.getVersion())
                 .build());
+        issueAgentKey(validator.existsAndGet(projectAgentDTO.getId()), projectAgentDTO, dto);
         return projectAgentDTO;
     }
 
@@ -174,6 +184,45 @@ public class ProjectAgentService extends AbstractService<ProjectAgentRepository,
         }
         agent.setDatabasePassword(passwordEncoder.encode(password));
         repository.save(agent);
+    }
+
+    /**
+     * Gives an agent that can store it a fresh random key (rotated on every registration).
+     * Only its hash is kept; agents that never received a key keep working without one.
+     */
+    private void issueAgentKey(ProjectAgent agent, ProjectAgentDTO response, ProjectAgentCreateDTO request) {
+        if (!request.isSupportsAgentKey()) {
+            return;
+        }
+        byte[] bytes = new byte[32];
+        RANDOM.nextBytes(bytes);
+        String key = Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+        agent.setAgentKeyHash(sha256(key));
+        repository.save(agent);
+        response.setAgentKey(key);
+    }
+
+    /**
+     * Checks the X-Agent-Key header for agent calls. Unknown or deleted agents are rejected;
+     * agents that were issued a key must present it.
+     */
+    public void verifyAgentKey(String agentId, String agentKey) {
+        ProjectAgent agent = repository.findByIdAndDeleted(agentId, false)
+                .orElseThrow(() -> new AccessDeniedException("Unknown agent"));
+        String expected = agent.getAgentKeyHash();
+        if (expected == null) {
+            return; // agent built before keys existed
+        }
+        if (agentKey == null || !MessageDigest.isEqual(
+                expected.getBytes(StandardCharsets.UTF_8), sha256(agentKey).getBytes(StandardCharsets.UTF_8))) {
+            throw new AccessDeniedException("Invalid agent key");
+        }
+    }
+
+    @SneakyThrows
+    private static String sha256(String value) {
+        byte[] digest = MessageDigest.getInstance("SHA-256").digest(value.getBytes(StandardCharsets.UTF_8));
+        return HexFormat.of().formatHex(digest);
     }
 
     private String hashOrNull(String password) {
