@@ -54,7 +54,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
             try {
                 Claims claims = jwtUtils.extractClaims(token);
-                if (jwtUtils.isTokenValid(token, claims)) {
+                // refresh tokens are only good for /auth/refresh-token, never for API calls
+                if (jwtUtils.isTokenValid(token, claims) && jwtUtils.isType(claims, JwtUtils.ACCESS)) {
                     CustomUserDetails userDetails = prepareUserDetails(claims);
 
                     Authentication auth = new UsernamePasswordAuthenticationToken(
@@ -74,6 +75,9 @@ public class JwtFilter extends OncePerRequestFilter {
 
         AuthUser authUser = authUserRepository.findByUsernameAndDeletedFalse(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
+        if (jwtUtils.issuedBeforePasswordChange(claims, authUser)) {
+            throw new UsernameNotFoundException("token issued before password change");
+        }
         String userId = authUser.getId();
 
         return CustomUserDetails.builder()

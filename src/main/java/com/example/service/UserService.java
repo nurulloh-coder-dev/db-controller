@@ -19,7 +19,8 @@ import com.example.repository.ProjectDatabaseUserRepository;
 import com.example.validator.AccessValidator;
 import com.example.validator.AuthUserValidator;
 
-import java.util.Base64;
+import com.example.exception.InvalidInput;
+import java.time.Duration;
 import java.util.List;
 
 @Service
@@ -36,8 +37,10 @@ public class UserService
     private final ProjectDatabaseUserService projectDatabaseUserService;
     private final ProjectDatabaseUserRepository projectDatabaseUserRepository;
     private final AccessValidator accessValidator;
+    private final PasswordTokenService passwordTokenService;
+    private final AuthService authService;
 
-    public UserService(AuthUserRepository repository, AuthUserMapper mapper, AuthUserValidator validator, ApplicationEventPublisher publisher, PasswordEncoder passwordEncoder, AuthUserValidator authUserValidator, ProjectDatabaseUserService projectDatabaseUserService, ProjectDatabaseUserRepository projectDatabaseUserRepository, AccessValidator accessValidator) {
+    public UserService(AuthUserRepository repository, AuthUserMapper mapper, AuthUserValidator validator, ApplicationEventPublisher publisher, PasswordEncoder passwordEncoder, AuthUserValidator authUserValidator, ProjectDatabaseUserService projectDatabaseUserService, ProjectDatabaseUserRepository projectDatabaseUserRepository, AccessValidator accessValidator, PasswordTokenService passwordTokenService, AuthService authService) {
         super(repository, mapper, validator);
         this.publisher = publisher;
         this.passwordEncoder = passwordEncoder;
@@ -45,6 +48,8 @@ public class UserService
         this.projectDatabaseUserService = projectDatabaseUserService;
         this.projectDatabaseUserRepository = projectDatabaseUserRepository;
         this.accessValidator = accessValidator;
+        this.passwordTokenService = passwordTokenService;
+        this.authService = authService;
     }
 
     @Override
@@ -52,8 +57,9 @@ public class UserService
     public AuthUserDto create(AuthUserCreateDto dto) {
         validator.validateOnCreate(dto);
         AuthUser authUser = mapper.fromDto(dto);
-        publisher.publishEvent(new SendEmailToAuthUser(this, authUser.getEmail(), "Hey there!\nYou have been successfully registered to DB-controller!🤗🤗🤗\nHere are details for login: username =  %s and password = %s for login. DO NOT SHARE IT WITH ANYONE!!!".formatted(authUser.getUsername(), authUser.getPassword()), "Welcome to DB-controller.com"));
+        // the generated password is never shown to anyone; the user picks their own through the link
         authUser.setPassword(passwordEncoder.encode(authUser.getPassword()));
+        sendWelcomeEmail(authUser);
         return mapper.toDto(repository.save(authUser));
     }
 
@@ -125,25 +131,39 @@ public class UserService
         repository.save(authUser);
     }
 
-    public Boolean handlePasswordCheck(String encodedPassword) {
+    public Boolean handlePasswordCheck(String password) {
         AuthUser authUser = validator.validateIdAndGet(validator.validateAuthenticationAndGetId());
-        String password = new String(Base64.getDecoder().decode(encodedPassword));
-        return passwordEncoder.matches(password, authUser.getPassword());
+        return password != null && passwordEncoder.matches(password, authUser.getPassword());
     }
 
-    public void handlePasswordUpdate(String encodedPassword) {
+    /** Changing the login password needs the current one, so a stolen session token isn't enough. */
+    public void handlePasswordUpdate(String currentPassword, String newPassword) {
         AuthUser authUser = validator.validateIdAndGet(validator.validateAuthenticationAndGetId());
-        String password = new String(Base64.getDecoder().decode(encodedPassword));
-        authUser.setPassword(passwordEncoder.encode(password));
-        repository.save(authUser);
+        if (currentPassword == null || !passwordEncoder.matches(currentPassword, authUser.getPassword())) {
+            throw new InvalidInput("Current password is incorrect");
+        }
+        authService.setPassword(authUser, newPassword);
+    }
+
+    private void sendWelcomeEmail(AuthUser user) {
+        String link = passwordTokenService.createLink(user.getEmail(), Duration.ofDays(3));
+        String text = """
+                Hey there!
+                You have been registered to DB-Controller with the username: %s
+
+                Set your password here (the link is valid for 3 days and works once):
+                %s
+
+                If the link has expired, use "Forgot password" on the login page.""".formatted(user.getUsername(), link);
+        publisher.publishEvent(new SendEmailToAuthUser(this, user.getEmail(), text, "Welcome to DB-Controller"));
     }
 
     @Transactional
     public AuthUserDto createWithOrganization(AuthUserCreateWithOrganization dto, String lang) {
         validator.validateOnCreateWithOrganization(dto,lang);
         AuthUser user = mapper.toEntityFromCreateAuthUserWithOrganization(dto,lang);
-        publisher.publishEvent(new SendEmailToAuthUser(this, user.getEmail(), "Hey there!\nYou have been successfully registered to DB-controller!🤗🤗🤗\nHere are details for login: username = %s and password = %s for login. DO NOT SHARE IT WITH ANYONE!!!".formatted(user.getUsername(), user.getPassword()), "Welcome to DB-controller.com"));
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        sendWelcomeEmail(user);
         return mapper.toDto(repository.save(user));
     }
 }
