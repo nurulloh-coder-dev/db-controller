@@ -2,7 +2,9 @@ package com.example.service;
 
 import com.example.model.dto.special.AuthUserDbsResponse;
 import com.example.model.dto.special.DatabaseUserRegistry;
+import com.example.exception.InvalidInput;
 import com.example.exception.ObjectNotFound;
+import com.example.util.DbPasswordPolicy;
 import com.example.model.entity.*;
 import com.example.repository.DatabaseRoleRepository;
 import com.example.validator.AccessValidator;
@@ -124,6 +126,10 @@ public class ProjectDatabaseUserService extends AbstractService<
             throw new ObjectNotFound("user not found");
         }
         authUserValidator.validateId(authUserId);
+        // the agent embeds this password in SQL on the customer's database, so allow only safe characters
+        if (password != null && !password.isBlank() && !DbPasswordPolicy.isSafe(password)) {
+            throw new InvalidInput("Password must be " + DbPasswordPolicy.ALLOWED);
+        }
         mapper.mapPatchUpdatePassword(authUserId, password);
     }
 

@@ -12,7 +12,7 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({ObjectNotFound.class, UserAlreadyExist.class})
+    @ExceptionHandler({ObjectNotFound.class, UserAlreadyExist.class, InvalidInput.class})
     public ResponseEntity<Map<String, String>> handleException(RuntimeException ex){
         Map<String,String> error = new HashMap<>();
         error.put("message",ex.getMessage()!=null?ex.getMessage():"hmm something went wrong..\nTry again later");

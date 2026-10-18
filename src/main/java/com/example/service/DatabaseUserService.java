@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import com.example.model.dto.special.UserDto;
 import com.example.repository.DatabaseUserRepository;
+import com.example.util.DbPasswordPolicy;
 
 import java.util.*;
 
@@ -32,6 +33,11 @@ public class DatabaseUserService {
         List<AgentDbUserRow> users = repository.getAllForAgent(agentId, version);
 
         users.forEach(user -> {
+            if (user.getDbPassword() != null && !DbPasswordPolicy.isSafe(user.getDbPassword())) {
+                // never hand the agent a value that could break out of its SQL (e.g. stored before validation existed)
+                log.warn("Skipping agent update for {}: stored database password has unsafe characters", user.getUsername());
+                return;
+            }
             String rolesJson = user.getRoles();
             List<String> rolesList = Collections.emptyList();
 
