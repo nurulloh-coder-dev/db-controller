@@ -2,6 +2,7 @@ package com.example.controller;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import com.example.model.dto.databaseRole.DatabaseRoleCreateDTO;
 import com.example.model.dto.databaseRole.DatabaseRoleDTO;
@@ -28,16 +29,19 @@ public class DatabaseRoleController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<DatabaseRoleDTO> create(@RequestBody DatabaseRoleCreateDTO dto) {
         return ResponseEntity.ok(service.create(dto));
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DatabaseRoleDTO> update(@PathVariable("id") String id, @RequestBody DatabaseRoleDTO dto) {
         return ResponseEntity.ok(service.update(id, dto));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> delete(@PathVariable("id") String id) {
         service.delete(id);
         return ResponseEntity.ok("Role has deleted successfully!");

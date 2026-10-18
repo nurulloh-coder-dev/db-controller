@@ -40,7 +40,6 @@ public class ProjectAgentMapper implements BaseMapper {
         dto.setId(projectAgent.getId());
         dto.setName(projectAgent.getName());
         dto.setDatabaseUsername(projectAgent.getDatabaseUsername());
-        dto.setDatabasePassword(projectAgent.getDatabasePassword());
         dto.setDatabaseUrl(projectAgent.getDatabaseUrl());
         return dto;
     }

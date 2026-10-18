@@ -66,7 +66,7 @@ public class ProjectDatabaseUserMapper implements BaseMapper {
         ProjectDatabase database = projectDatabaseRepository.findById(createDto.getDatabaseId()).orElseThrow(() -> new RuntimeException("database not found"));
         AuthUser authUser = authUserValidator.validateIdAndGet(createDto.getAuthUserId());
         projectDatabaseValidator.checkIfMemberAlreadyExists(database,createDto.getAuthUserId());
-        List<DatabaseRole> roles = databaseRoleRepository.findAllByIdIn(createDto.getRoles());
+        List<DatabaseRole> roles = rolesOfDatabase(databaseRoleRepository.findAllByIdIn(createDto.getRoles()), database);
         projectDatabaseUser.setDatabase(database);
         projectDatabaseUser.setAuthUser(authUser);
         projectDatabaseUser.setRoles(roles);
@@ -86,17 +86,17 @@ public class ProjectDatabaseUserMapper implements BaseMapper {
     }
 
     public void mapUpdate(ProjectDatabaseUser projectDatabaseUser, ProjectDatabaseUserUpdateDto dto) {
-        List<DatabaseRole> roles = databaseRoleRepository.findAllById(dto.getRoleIds());
-        projectDatabaseUser.setRoles(roles);
         ProjectDatabase database = projectDatabaseRepository.findById(dto.getDatabaseId()).orElseThrow(() -> new RuntimeException("database not found"));
+        projectDatabaseUser.setRoles(rolesOfDatabase(databaseRoleRepository.findAllById(dto.getRoleIds()), database));
         projectDatabaseUser.setDatabase(database);
         projectDatabaseUser.setVersion(versionProviderService.getMaxVersionAndIncrement(database));
     }
 
-    public List<ProjectDatabaseUserDto> toListDto() {
+    public List<ProjectDatabaseUserDto> toListDto(String organizationId) {
         return repository.findAll()
                 .stream()
                 .filter(m->!m.getDeleted())
+                .filter(m->m.getDatabase().getOrganization() != null && organizationId.equals(m.getDatabase().getOrganization().getId()))
                 .map(this::toDto)
                 .toList();
     }
@@ -136,5 +136,11 @@ public class ProjectDatabaseUserMapper implements BaseMapper {
         projectDatabaseUser.setUsername(user.getUsername());
         projectDatabaseUser.setRoles(databaseRoleRepository.getAllByName(databaseId,user.getRoles()));
         return projectDatabaseUser;
+    }
+
+    private List<DatabaseRole> rolesOfDatabase(List<DatabaseRole> roles, ProjectDatabase database) {
+        return roles.stream()
+                .filter(r -> database.getId().equals(r.getDatabaseId()))
+                .toList();
     }
 }

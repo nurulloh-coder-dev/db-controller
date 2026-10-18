@@ -13,7 +13,6 @@ public class ProjectAgentDTO {
     private String id;
     private String name;
     private String databaseUsername;
-    private String databasePassword;
     private String databaseUrl;
     private Integer version;
 }

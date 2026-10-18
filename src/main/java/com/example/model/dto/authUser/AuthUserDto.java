@@ -21,4 +21,5 @@ public class AuthUserDto {
     private IdNameDto role;
     private WebSettings settings;
     private OrganizationDto organization;
+    private Boolean superAdmin;
 }

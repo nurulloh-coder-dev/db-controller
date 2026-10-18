@@ -51,3 +51,5 @@ app-security:
     access-exp: 6000
     refresh-exp: 86400
     secret: ${SECRET_KEY}
+  # comma-separated usernames allowed to use platform-wide admin endpoints
+  super-admins: ${SUPER_ADMINS:}

@@ -2,8 +2,10 @@ package com.example.service;
 
 import com.example.model.dto.special.AuthUserDbsResponse;
 import com.example.model.dto.special.DatabaseUserRegistry;
+import com.example.exception.ObjectNotFound;
 import com.example.model.entity.*;
 import com.example.repository.DatabaseRoleRepository;
+import com.example.validator.AccessValidator;
 import com.example.validator.AuthUserValidator;
 import com.example.validator.ProjectDatabaseValidator;
 import jakarta.transaction.Transactional;
@@ -35,8 +37,9 @@ public class ProjectDatabaseUserService extends AbstractService<
     private final DatabaseRoleRepository databaseRoleRepository;
     private final ProjectDatabaseValidator projectDatabaseValidator;
     private final VersionProviderService versionProviderService;
+    private final AccessValidator accessValidator;
 
-    public ProjectDatabaseUserService(ProjectDatabaseUserRepository repository, ProjectDatabaseUserMapper mapper, ProjectDatabaseUserValidator validator, ProjectDatabaseRepository projectDatabaseRepository, ApplicationEventPublisher applicationEventPublisher, AuthUserValidator authUserValidator, DatabaseRoleRepository databaseRoleRepository, ProjectDatabaseValidator projectDatabaseValidator, VersionProviderService versionProviderService) {
+    public ProjectDatabaseUserService(ProjectDatabaseUserRepository repository, ProjectDatabaseUserMapper mapper, ProjectDatabaseUserValidator validator, ProjectDatabaseRepository projectDatabaseRepository, ApplicationEventPublisher applicationEventPublisher, AuthUserValidator authUserValidator, DatabaseRoleRepository databaseRoleRepository, ProjectDatabaseValidator projectDatabaseValidator, VersionProviderService versionProviderService, AccessValidator accessValidator) {
         super(repository, mapper, validator);
         this.projectDatabaseRepository = projectDatabaseRepository;
         this.applicationEventPublisher = applicationEventPublisher;
@@ -44,12 +47,14 @@ public class ProjectDatabaseUserService extends AbstractService<
         this.databaseRoleRepository = databaseRoleRepository;
         this.projectDatabaseValidator = projectDatabaseValidator;
         this.versionProviderService = versionProviderService;
+        this.accessValidator = accessValidator;
     }
 
 
     @Override
     @Transactional
     public ProjectDatabaseUserDto create(ProjectDatabaseUserCreateDto createDto) {
+        checkCreateAccess(createDto);
         validator.validateOnCreate(createDto);
         var databaseUser = mapper.mapToEntityOnCreate(createDto);
         ProjectDatabaseUser savedMember = repository.save(databaseUser);
@@ -63,7 +68,8 @@ public class ProjectDatabaseUserService extends AbstractService<
 
     @Override
     public ProjectDatabaseUserDto update(String id, ProjectDatabaseUserUpdateDto dto) {
-        ProjectDatabaseUser projectDatabaseUser = validator.validateId(id);
+        ProjectDatabaseUser projectDatabaseUser = checkMember(validator.validateId(id));
+        accessValidator.checkDatabase(projectDatabaseValidator.validateId(dto.getDatabaseId()));
         mapper.mapUpdate(projectDatabaseUser, dto);
         repository.save(projectDatabaseUser);
         try {
@@ -78,19 +84,19 @@ public class ProjectDatabaseUserService extends AbstractService<
 
     @Override
     public ProjectDatabaseUserDto get(String id) {
-        ProjectDatabaseUser projectDatabaseUser = validator.validateId(id);
+        ProjectDatabaseUser projectDatabaseUser = checkMember(validator.validateId(id));
         return mapper.toDto(projectDatabaseUser);
     }
 
     @Override
     public List<ProjectDatabaseUserDto> getAll() {
-        return mapper.toListDto();
+        return mapper.toListDto(accessValidator.currentOrganizationId());
     }
 
     @Override
     @Transactional
     public void delete(String id) {
-        ProjectDatabaseUser projectDatabaseUser = validator.validateId(id);
+        ProjectDatabaseUser projectDatabaseUser = checkMember(validator.validateId(id));
         mapper.mapToDelete(projectDatabaseUser);
         AuthUser authUser = projectDatabaseUser.getAuthUser();
         if (authUser!=null) {
@@ -113,6 +119,10 @@ public class ProjectDatabaseUserService extends AbstractService<
     }
 
     public void updatePatch(String authUserId, String password) {
+        // users may only change their own database password
+        if (!authUserId.equals(accessValidator.currentUserId())) {
+            throw new ObjectNotFound("user not found");
+        }
         authUserValidator.validateId(authUserId);
         mapper.mapPatchUpdatePassword(authUserId, password);
     }
@@ -131,8 +141,8 @@ public class ProjectDatabaseUserService extends AbstractService<
     }
 
     public void attachUser(String dbUserId, String authId) {
-        ProjectDatabaseUser projectDatabaseUser = validator.validateId(dbUserId);
-        AuthUser authUser = authUserValidator.validateIdAndGet(authId);
+        ProjectDatabaseUser projectDatabaseUser = checkMember(validator.validateId(dbUserId));
+        AuthUser authUser = accessValidator.checkUser(authUserValidator.validateIdAndGet(authId));
         projectDatabaseValidator.checkIfAuthUserAlreadyExists(projectDatabaseUser.getDatabase(), authUser);
         projectDatabaseUser.setAuthUser(authUser);
         projectDatabaseUser.setVersion(versionProviderService.getMaxVersionAndIncrement(projectDatabaseUser.getDatabase()));
@@ -141,9 +151,11 @@ public class ProjectDatabaseUserService extends AbstractService<
     }
 
     public void unattachUser(String dbUserId, String authId) {
-        ProjectDatabaseUser projectDatabaseUser = validator.validateId(dbUserId);
-        AuthUser authUser = authUserValidator.validateIdAndGet(authId);
-        projectDatabaseValidator.checkIfAuthUserAlreadyExists(projectDatabaseUser.getDatabase(), authUser);
+        ProjectDatabaseUser projectDatabaseUser = checkMember(validator.validateId(dbUserId));
+        AuthUser authUser = accessValidator.checkUser(authUserValidator.validateIdAndGet(authId));
+        if (projectDatabaseUser.getAuthUser() == null || !projectDatabaseUser.getAuthUser().getId().equals(authUser.getId())) {
+            throw new ObjectNotFound("member not found");
+        }
         projectDatabaseUser.setAuthUser(null);
         applicationEventPublisher.publishEvent(new SendEmailUpdateDBEvent(this, authUser.getEmail(), "Hi there your membership for a database has been revoked! For more more details log in to your account on DB-controller.com", authUser.getSettings().getEnableEmailing()));
         repository.save(projectDatabaseUser);
@@ -158,9 +170,11 @@ public class ProjectDatabaseUserService extends AbstractService<
     }
 
     public void create(ProjectDatabaseUserCreateDto createDto, List<String> databaseId) {
+        checkCreateAccess(createDto);
         validator.validateOnCreate(createDto);
         AuthUser authUser = authUserValidator.validateIdAndGet(createDto.getAuthUserId());
         List<ProjectDatabase> allById = projectDatabaseRepository.findAllById(databaseId);
+        allById.forEach(accessValidator::checkDatabase);
         List<ProjectDatabase> databases = allById
                 .stream()
                 .filter(db -> db.getMembers().stream()
@@ -181,5 +195,15 @@ public class ProjectDatabaseUserService extends AbstractService<
             repository.save(projectDatabaseUser);
         }
         projectDatabaseRepository.saveAll(databases);
+    }
+
+    private ProjectDatabaseUser checkMember(ProjectDatabaseUser member) {
+        accessValidator.checkDatabase(member.getDatabase());
+        return member;
+    }
+
+    private void checkCreateAccess(ProjectDatabaseUserCreateDto createDto) {
+        accessValidator.checkDatabase(projectDatabaseValidator.validateId(createDto.getDatabaseId()));
+        accessValidator.checkUser(authUserValidator.validateIdAndGet(createDto.getAuthUserId()));
     }
 }

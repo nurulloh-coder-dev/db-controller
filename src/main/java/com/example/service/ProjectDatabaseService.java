@@ -7,6 +7,8 @@ import com.example.model.dto.database.ProjectDatabaseDto;
 import com.example.model.dto.database.ProjectDatabaseUpdateDto;
 import com.example.model.entity.ProjectDatabase;
 import com.example.repository.ProjectDatabaseRepository;
+import com.example.validator.AccessValidator;
+import com.example.validator.ProjectAgentValidator;
 import com.example.validator.ProjectDatabaseValidator;
 
 import java.util.List;
@@ -19,8 +21,13 @@ public class ProjectDatabaseService extends AbstractService<
         ProjectDatabaseMapper,
         ProjectDatabaseValidator> implements CRUDService<ProjectDatabaseDto, ProjectDatabaseCreateDto, ProjectDatabaseUpdateDto,String>{
 
-    public ProjectDatabaseService(ProjectDatabaseRepository repository, ProjectDatabaseMapper mapper, ProjectDatabaseValidator validator) {
+    private final AccessValidator accessValidator;
+    private final ProjectAgentValidator projectAgentValidator;
+
+    public ProjectDatabaseService(ProjectDatabaseRepository repository, ProjectDatabaseMapper mapper, ProjectDatabaseValidator validator, AccessValidator accessValidator, ProjectAgentValidator projectAgentValidator) {
         super(repository, mapper, validator);
+        this.accessValidator = accessValidator;
+        this.projectAgentValidator = projectAgentValidator;
     }
 
     @Override
@@ -33,14 +40,16 @@ public class ProjectDatabaseService extends AbstractService<
 
     @Override
     public ProjectDatabaseDto update(String id, ProjectDatabaseUpdateDto dto) {
-        ProjectDatabase projectDatabase = validator.validateId(id);
+        ProjectDatabase projectDatabase = accessValidator.checkDatabase(validator.validateId(id));
+        accessValidator.checkAgent(projectAgentValidator.existsAndGet(dto.getAgentId()));
         mapper.mapUpdate(projectDatabase,dto);
+        projectDatabase.getMembers().forEach(m -> accessValidator.checkDatabase(m.getDatabase()));
         return mapper.toDto(repository.save(projectDatabase));
     }
 
     @Override
     public ProjectDatabaseDto get(String id) {
-        ProjectDatabase projectDatabase = validator.validateId(id);
+        ProjectDatabase projectDatabase = accessValidator.checkDatabase(validator.validateId(id));
         return mapper.toDto(projectDatabase);
     }
 
@@ -52,7 +61,7 @@ public class ProjectDatabaseService extends AbstractService<
 
     @Override
     public void delete(String id) {
-        ProjectDatabase projectDatabase = validator.validateId(id);
+        ProjectDatabase projectDatabase = accessValidator.checkDatabase(validator.validateId(id));
         projectDatabase.setDeleted(true);
         repository.save(projectDatabase);
     }

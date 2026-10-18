@@ -4,6 +4,7 @@ package com.example.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import com.example.model.dto.authRole.AuthRoleChangeDto;
 import com.example.model.dto.authRole.AuthRoleDto;
@@ -20,12 +21,14 @@ public class AuthRoleController {
 
 
     @PostMapping
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<AuthRoleDto> create(@RequestBody AuthRoleChangeDto dto) {
         AuthRoleDto response = service.create(dto);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<AuthRoleDto> update(@RequestBody AuthRoleChangeDto dto, @PathVariable String id) {
         AuthRoleDto response = service.update(id, dto);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -44,6 +47,7 @@ public class AuthRoleController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable String id) {
         service.delete(id);
         return ResponseEntity.noContent().build();

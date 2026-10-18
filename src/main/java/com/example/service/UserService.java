@@ -16,6 +16,7 @@ import com.example.model.entity.ProjectDatabaseUser;
 import com.example.model.entity.WebSettings;
 import com.example.repository.AuthUserRepository;
 import com.example.repository.ProjectDatabaseUserRepository;
+import com.example.validator.AccessValidator;
 import com.example.validator.AuthUserValidator;
 
 import java.util.Base64;
@@ -34,14 +35,16 @@ public class UserService
     private final AuthUserValidator authUserValidator;
     private final ProjectDatabaseUserService projectDatabaseUserService;
     private final ProjectDatabaseUserRepository projectDatabaseUserRepository;
+    private final AccessValidator accessValidator;
 
-    public UserService(AuthUserRepository repository, AuthUserMapper mapper, AuthUserValidator validator, ApplicationEventPublisher publisher, PasswordEncoder passwordEncoder, AuthUserValidator authUserValidator, ProjectDatabaseUserService projectDatabaseUserService, ProjectDatabaseUserRepository projectDatabaseUserRepository) {
+    public UserService(AuthUserRepository repository, AuthUserMapper mapper, AuthUserValidator validator, ApplicationEventPublisher publisher, PasswordEncoder passwordEncoder, AuthUserValidator authUserValidator, ProjectDatabaseUserService projectDatabaseUserService, ProjectDatabaseUserRepository projectDatabaseUserRepository, AccessValidator accessValidator) {
         super(repository, mapper, validator);
         this.publisher = publisher;
         this.passwordEncoder = passwordEncoder;
         this.authUserValidator = authUserValidator;
         this.projectDatabaseUserService = projectDatabaseUserService;
         this.projectDatabaseUserRepository = projectDatabaseUserRepository;
+        this.accessValidator = accessValidator;
     }
 
     @Override
@@ -56,7 +59,7 @@ public class UserService
 
     @Override
     public AuthUserDto update(String id, AuthUserUpdateDto dto) {
-        AuthUser authUser = validator.validateIdAndGet(id);
+        AuthUser authUser = accessValidator.checkUser(validator.validateIdAndGet(id));
         validator.validateOnUpdate(dto,id);
         mapper.fromDto(dto, authUser);
         publisher.publishEvent(new SendEmailUpdateDBEvent(this, authUser.getEmail(), "Hey there %s!\n Your role has been recently changed to %s. For more info login to your account!".formatted(authUser.getUsername(), authUser.getRole()), authUser.getSettings().getEnableEmailing()));
@@ -65,7 +68,7 @@ public class UserService
 
     @Override
     public AuthUserDto get(String id) {
-        AuthUser authUser = validator.validateIdAndGet(id);
+        AuthUser authUser = accessValidator.checkUser(validator.validateIdAndGet(id));
         return mapper.toDto(authUser);
     }
 
@@ -86,7 +89,7 @@ public class UserService
 
     @Override
     public void delete(String id) {
-        AuthUser authUser = validator.validateIdAndGet(id);
+        AuthUser authUser = accessValidator.checkUser(validator.validateIdAndGet(id));
         validator.deleteDatabaseMembership(id);
         projectDatabaseUserRepository.deleteMemberFromDatabaseByAuthUser(id);
         List<ProjectDatabaseUser> allByAuthUser =
@@ -100,14 +103,20 @@ public class UserService
     }
 
     public AuthUserDto updateIgnoreNull(String id, AuthUserUpdateDto dto) {
-        AuthUser authUser = validator.validateIdAndGet(id);
+        AuthUser authUser = accessValidator.checkUser(validator.validateIdAndGet(id));
+        // users may edit their own profile; editing others or changing a role needs an admin
+        if (!authUser.getId().equals(accessValidator.currentUserId()) || dto.getRoleId() != null) {
+            accessValidator.requireAdmin();
+        }
         mapper.fromDtoIgnoreNull(dto, authUser);
         return mapper.toDto(repository.save(authUser));
     }
 
     public AuthUserDto getProfile() {
         String authUserId = authUserValidator.validateAuthenticationAndGetId();
-        return get(authUserId);
+        AuthUserDto profile = get(authUserId);
+        profile.setSuperAdmin(accessValidator.isSuperAdmin());
+        return profile;
     }
 
     public void changeSettings(WebSettings settings) {

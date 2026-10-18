@@ -3,6 +3,7 @@ package com.example.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import com.example.model.dto.sub_plans.SubscriptionPlanCreateDto;
 import com.example.model.dto.sub_plans.SubscriptionPlanDto;
@@ -18,6 +19,7 @@ public class SubscriptionPlanController {
     private final SubscriptionPlanService service;
 
     @PostMapping
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<SubscriptionPlanDto> create(@RequestBody SubscriptionPlanCreateDto createDto) {
         SubscriptionPlanDto subscriptionPlanDto = service.create(createDto);
         return new ResponseEntity<>(subscriptionPlanDto, HttpStatus.CREATED);
@@ -36,6 +38,7 @@ public class SubscriptionPlanController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<SubscriptionPlanDto> update(@PathVariable String id, @RequestBody SubscriptionPlanUpdateDto dto) {
         SubscriptionPlanDto update = service.update(id, dto);
         return ResponseEntity.ok(update);

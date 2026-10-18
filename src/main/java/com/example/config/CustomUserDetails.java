@@ -24,11 +24,15 @@ public class CustomUserDetails implements UserDetails {
     private WebLang webLang;
     private String organizationId;
     private String userId;
+    private boolean superAdmin;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+        if (superAdmin) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_SUPER_ADMIN"));
+        }
         return authorities;
     }
 

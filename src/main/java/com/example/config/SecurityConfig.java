@@ -70,15 +70,7 @@ public class SecurityConfig {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        // 1. Open CORS for /api/v1/agent/** (allow any origin)
-        CorsConfiguration agentConfig = new CorsConfiguration();
-        agentConfig.setAllowedOriginPatterns(List.of("*"));  // Allows ANY origin
-        agentConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        agentConfig.setAllowedHeaders(List.of("*"));
-        agentConfig.setAllowCredentials(false);  // MUST be false when using "*"
-        agentConfig.setMaxAge(3600L);
-
-        // 2. Restricted CORS for everything else (your current whitelist)
+        // Agents call the API server-to-server, so no endpoint needs to be open to every browser origin
         CorsConfiguration restrictedConfig = new CorsConfiguration();
 
         restrictedConfig.setAllowedOrigins(Arrays.asList(
@@ -94,10 +86,6 @@ public class SecurityConfig {
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
-        // Register the open config FIRST for the agent paths
-        source.registerCorsConfiguration("/api/v1/agent/**", agentConfig);
-
-        // Register the restricted config for everything else
         source.registerCorsConfiguration("/**", restrictedConfig);
 
         return source;

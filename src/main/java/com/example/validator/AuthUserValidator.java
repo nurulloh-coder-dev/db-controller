@@ -92,6 +92,11 @@ public class AuthUserValidator implements BaseValidator {
     }
 
     public void validateOnCreateWithOrganization(AuthUserCreateWithOrganization dto, String lang) {
+        // public sign-up may only create the first user of a freshly created organization;
+        // otherwise anyone knowing an organization id could join it as ADMIN
+        if (dto.getOrganizationId() == null || repository.countAllByOrganizationId(dto.getOrganizationId()) > 0) {
+            throw new ObjectNotFound("Organization Not Found");
+        }
         Optional<AuthUser> optional = repository.findByUsernameAndDeletedFalse(dto.getUsername());
 
         if(optional.isPresent()) {
